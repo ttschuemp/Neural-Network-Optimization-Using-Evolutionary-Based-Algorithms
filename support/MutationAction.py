@@ -3,7 +3,7 @@
 import numpy as np 
 
 from support.Layer import Layer
-from Parameters import randomActivationLayer
+from support.Parameters import randomActivationLayer
 
 # switch like statement
 
