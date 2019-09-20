@@ -2,12 +2,12 @@
 
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+
 
 from NeuralNetwork import NeuralNetwork
-from support.Loss_n_ActivationFunction import tanh, tanhDerivative, sigmoid, sigmoidDerivative, mse, mseDerivative
+from support.Layer import Layer
 from support.ActivationLayer import ActivationLayer
-from support.BatchGenerator import BatchGenerator
+from support.Loss_n_ActivationFunction import tanh, tanhDerivative, sigmoid, sigmoidDerivative, mse, mseDerivative
 
 
 
@@ -37,7 +37,7 @@ for i in range(len(Target_test)):
     Target_test[i,n] = 0.99
     pass
 
-df = pd.read_csv("/Users/tobiastschuemperlin/Desktop/Masterarbeit/Python/Dataset/Wholesale customers data.csv", sep=',')
+df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/Wholesale customers data.csv", sep=',')
 
 
 inputs = (np.asfarray(df.iloc[:,2:8]) / 112152.0 * 0.99) + 0.01 # scale and shift the inputs

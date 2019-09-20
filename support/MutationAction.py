@@ -31,19 +31,26 @@ def rmvLayer(neuralNetwork): # removes layer
 
 
 
-def changeLr(direc): # new and random learning rate
-    direc["LearningRate"] = np.random.rand()
+def changeLr(neuralNetwork): # new and random learning rate
+    neuralNetwork.learningRate = np.random.rand()
 
 
-def four(direc):
+def jitterNN(neuralNetwork):
+    n = 2 # iterate over every second element
+    i = 0
+    for l in neuralNetwork.layers: # loop over every second element in layer list cause these are
+                                   # the layers with weights
+        if i % n == 0:
+            l.jitterWeights()
+        i += 1
+        
     
-    
-    return childNN
+
 
 def five(direc):
     
     
-    return childNN
+    pass
 
 
 
@@ -52,7 +59,7 @@ def mutationAction(action, direc): # switch like function
         1: addLayer,
         2: rmvLayer,
         3: changeLr,
-        4: four,
+        4: jitterNN,
         5: five,
     }
     # Get the function from switcher dictionary

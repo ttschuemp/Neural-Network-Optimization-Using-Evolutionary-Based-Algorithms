@@ -18,7 +18,7 @@ class NeuralNetwork:
     sizeInput = 6
     sizeOutput = 3
     
-    def __init__(self, layerList, learningRate = 0.05, loss = mse, lossDerivative = mseDerivative):
+    def __init__(self, layerList, loss = mse, lossDerivative = mseDerivative, learningRate = 0.05):
         self.layers = layerList
         self.loss = loss
         self.lossDerivative = lossDerivative

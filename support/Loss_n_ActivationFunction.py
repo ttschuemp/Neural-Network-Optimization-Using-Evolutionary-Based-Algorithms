@@ -1,4 +1,4 @@
-# support/Loss&ActivationFunction.py
+# support/Loss_n_ActivationFunction.py
 
 import numpy as np
 
