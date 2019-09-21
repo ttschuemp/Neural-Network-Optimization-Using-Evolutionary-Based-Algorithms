@@ -84,7 +84,7 @@ for i in range(len(out)):
     YHat.append(yHat)
 YHat = np.array(YHat)
 
-o=np.argmax(out)
+
 
 # Target Test
 Y= []
@@ -93,8 +93,25 @@ for i in range(len(targets_test)):
     Y.append(y)
 Y = np.array(Y)
 
+
 for i in range(len(YHat)): 
-    print("i: ", YHat[i] == Y[i])
+    print(i,":" , YHat[i] == Y[i])
+
+
+scorecard = []
+for i in range(len(YHat)): 
+    if (YHat[i] == Y[i]): 
+        scorecard.append(1)
+    else:                         
+        scorecard.append(0)
+        pass
+
+scorecard_array = np.asarray(scorecard)
+print ("performance OoS = ", scorecard_array.sum() /scorecard_array.size)
+
+
+
+
 
 
 

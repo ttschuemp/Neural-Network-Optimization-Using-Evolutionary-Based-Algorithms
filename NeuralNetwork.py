@@ -41,7 +41,7 @@ class NeuralNetwork:
             output = inputData[i] # forward propagation
             for layer in self.layers:
                 output = layer.forwardPropagation(output)
-            print("YHat:", np.argmax(output))
+#            print("YHat:", np.argmax(output))
             result.append(output)
         return result
 
