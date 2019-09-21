@@ -40,8 +40,8 @@ class EvolutionaryAlgorithm:
 
 
 
-    def makeOffspring(self, population): 
-        offSpring = []
+    def makeOffspring(self, population): # returns offSpringPopulation
+        
         # reproduction
         populationCopy = population.copy_pop(population)
         
@@ -49,13 +49,10 @@ class EvolutionaryAlgorithm:
         for n in populationCopy.neuralNetwork:
             
             mutationAction(2, n) # manipulates a neural network 
-            
-            
-            
+            # add possibility that some networks get 1+x times mutated, where x is Poi(1) !!!!!!
+        offSpringPopulation = populationCopy
         
-        
-        
-        return offSpringPop
+        return offSpringPopulation
     
     
     

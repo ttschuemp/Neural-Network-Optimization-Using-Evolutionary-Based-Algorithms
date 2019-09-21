@@ -43,8 +43,7 @@ def jitterNN(neuralNetwork):
         if i % n == 0:
             l.jitterWeights()
         i += 1
-        
-    
+
 
 
 def five(direc):

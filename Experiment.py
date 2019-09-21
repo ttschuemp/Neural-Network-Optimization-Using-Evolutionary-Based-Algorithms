@@ -11,47 +11,143 @@ from support.Loss_n_ActivationFunction import tanh, tanhDerivative, sigmoid, sig
 
 
 
-inputLayer = Layer(6, 10)
-activationFunction = ActivationLayer(sigmoid, sigmoidDerivative)
-hiddenLayer = Layer(10, 30)
-activationFunction2 = ActivationLayer(sigmoid, sigmoidDerivative)
-hiddenLayer2 = Layer(30, 30)
-activationFunction3 = ActivationLayer(sigmoid, sigmoidDerivative)
-outputLayer = Layer(30, 3)
-activationFunction4 = ActivationLayer(sigmoid, sigmoidDerivative)
+inputLayer = Layer(784, 100)
+activationFunction = ActivationLayer(tanh, tanhDerivative)
+hiddenLayer = Layer(100, 80)
+activationFunction2 = ActivationLayer(tanh, tanhDerivative)
+#hiddenLayer2 = Layer(300, 30)
+#activationFunction3 = ActivationLayer(sigmoid, sigmoidDerivative)
+outputLayer = Layer(80, 10)
+activationFunction4 = ActivationLayer(tanh, tanhDerivative)
 
 
 
-layerList = [inputLayer, activationFunction, hiddenLayer, activationFunction2, hiddenLayer2, activationFunction3,
+layerList = [inputLayer, activationFunction, hiddenLayer, activationFunction2, 
              outputLayer, activationFunction4]
 
 nn= NeuralNetwork(layerList, mse, mseDerivative)
 
-# Data
-
-# random test input
-Input_test = np.random.randn(2000,6)
-Target_test = np.zeros((2000,3))+0.01
-for i in range(len(Target_test)):
-    n=np.random.randint(3)
-    Target_test[i,n] = 0.99
-    pass
-
-df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/Wholesale customers data.csv", sep=',')
+# training data
+x_train = np.array([[0,0], [0,1], [1,0], [1,1]])
+y_train = np.array([[0], [1], [1], [0]])
 
 
-inputs = (np.asfarray(df.iloc[:,2:8]) / 112152.0 * 0.99) + 0.01 # scale and shift the inputs
-targets = np.zeros((440,3)) + 0.01 # create target output values
+
+
+
+#inputs = [[0.1,0.9,0.9],[0.9,0.9,0.1],[0.9,0.1,0.1],[0.1,0.1,0.9]]
+#
+#inputs = np.array(inputs)
+#
+#targets = np.array([0.1,0.9,0.9,0.1])
+#
+#
+#nn.train(inputs, targets, 1)
+
+# load the data into a list
+df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_train_100.csv", sep=',', header=None, index_col=False)
+
+
+
+# go through all records in the training data set
+
+
+
+
+
+inputs = (np.asfarray(df.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
+targets = np.zeros((100,10)) + 0.01 # create target output values
 for i in range(len(df)):
-    targets[i,(df.iloc[i,1]-1)] = 0.99  # all_values[0] is the target label for this record
+    j = df.iloc[i,0]
+    j=int(j)
+    targets[i,j] = 0.99  # all_values[0] is the target label for this record
     pass
 
-# Train
+nn.learningRate = 0.3
+nn.train(inputs, targets, epochs = 3)
 
-nn.train(inputs, targets, epochs = 10, batchSize = 60)
+df_test = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_test_10.csv", sep=',', header=None, index_col=False)
+inputs_test = (np.asfarray(df_test.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
+targets_test = np.zeros((10,10)) + 0.01 # create target output values
+for i in range(len(df_test)):
+    j = df_test.iloc[i,0]
+    j=int(j)
+    targets_test[i,j] = 0.99  # all_values[0] is the target label for this record
+    pass
 
-# test
-#nn.predict(inputs[0:280])
+out = nn.predict(inputs_test)
+
+# Prediction Test
+YHat= []
+for i in range(len(out)):
+    yHat = np.argmax(out[i])
+    YHat.append(yHat)
+YHat = np.array(YHat)
+
+o=np.argmax(out)
+
+# Target Test
+Y= []
+for i in range(len(targets_test)):
+    y = np.argmax(targets_test[i])
+    Y.append(y)
+Y = np.array(Y)
+
+for i in range(len(YHat)): 
+    print("i: ", YHat[i] == Y[i])
+
+
+
+# Data
+#df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/zip.train.csv", sep=' ', header=None, index_col=False)
+#
+#df= df.iloc[:,0:257] 
+#
+#
+## Train 
+#
+#inputs = df.iloc[:,1:257]
+#inputs = inputs.as_matrix()
+#
+#
+#targets = np.zeros((7291,10)) + 0.01 # create target output values
+#for i in range(len(df)):
+#    j = df.iloc[i,0]
+#    j=int(j)
+#    targets[i,j] = 0.99  # all_values[0] is the target label for this record
+#    pass
+#
+#
+#nn.train(inputs, targets, epochs = 10)
+#
+#
+#
+
+
+
+## random test input
+#Input_test = np.random.randn(2000,6)
+#Target_test = np.zeros((2000,3))+0.01
+#for i in range(len(Target_test)):
+#    n=np.random.randint(3)
+#    Target_test[i,n] = 0.99
+#    pass
+#
+#df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/Wholesale customers data.csv", sep=',')
+#
+#
+#inputs = (np.asfarray(df.iloc[:,2:8]) / 112152.0 * 0.99) + 0.01 # scale and shift the inputs
+#targets = np.zeros((440,3)) + 0.01 # create target output values
+#for i in range(len(df)):
+#    targets[i,(df.iloc[i,1]-1)] = 0.99  # all_values[0] is the target label for this record
+#    pass
+#
+## Train
+#
+#nn.train(inputs, targets, epochs = 10, batchSize = 60)
+#
+## test
+##nn.predict(inputs[0:280])
 
 
 

@@ -41,30 +41,28 @@ class NeuralNetwork:
             output = inputData[i] # forward propagation
             for layer in self.layers:
                 output = layer.forwardPropagation(output)
+            print("YHat:", np.argmax(output))
             result.append(output)
         return result
 
     # train the network
-    def train(self, xTrain, yTrain, epochs, batchSize = 0):
-        if batchSize != 0:
-            batch_generator = BatchGenerator(xTrain, yTrain, batchSize) # NEED EVERY EPOCH A NEW BATCH!!!!!
-            xTrain, yTrain = batch_generator.next()
-        else:
+    def train(self, xTrain, yTrain, epochs):
             length = len(xTrain) # sample dimension first
             lengthRow = len(xTrain[0])
             # training loop
             for i in range(epochs):
                 err = 0
                 scorecard = []
-                for j in range(length):
-                    output = xTrain[j] # forward propagation
+                for j in range(length): # for all col.
+                    output = xTrain[j] # forward propagation, one sample 
                     output = np.reshape(output,(1, lengthRow))
-                    for layer in self.layers:
-                        output = layer.forwardPropagation(output) # output for each row of the training data
+                    for l in self.layers:
+                        output = l.forwardPropagation(output) # output for each row of the training data
 
                     # compute loss (for display purpose only)
                     err = err + self.loss(yTrain[j], output) # compare the output of each row with the target of this row/sample
-#                   print("Y:", np.argmax(yTrain[j]),"YHat:", np.argmax(output))
+#                    print("error", err)
+#                    print("Y:", np.argmax(yTrain[j]),"YHat:", np.argmax(output))
                     if (np.argmax(yTrain[j]) == np.argmax(output)): # append correct or incorrect to list
                          # network's answer matches correct answer, add 1 to scorecard
                          scorecard.append(1)
@@ -74,11 +72,13 @@ class NeuralNetwork:
                          pass
                     # backward propagation
                     error = self.lossDerivative(yTrain[j], output) # wholesale example output is 1x3 and target is 1x3
-                    for layer in reversed(self.layers):     # Error is in example e 1x3 matrix/vector
-                        error = layer.backwardPropagation(error, self.learningRate)
+#                    print("error BP:", error)
+                    for l in reversed(self.layers):     # Error is in example e 1x3 matrix/vector
+                        error = l.backwardPropagation(error, self.learningRate)
 
                 # calculate average error on all samples
                 err /= length
+#                print("av error: ", err)
                 scorecard_array = np.asarray(scorecard)
                 print ("performance = ", scorecard_array.sum() /scorecard_array.size)
 
