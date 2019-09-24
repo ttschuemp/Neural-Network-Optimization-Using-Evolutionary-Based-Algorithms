@@ -75,39 +75,39 @@ for i in range(len(df_test)):
     targets_test[i,j] = 0.99  # all_values[0] is the target label for this record
     pass
 
-out = nn.predict(inputs_test)
+out = nn.predict(inputs_test, targets_test)
 
-# Prediction Test
-YHat= []
-for i in range(len(out)):
-    yHat = np.argmax(out[i])
-    YHat.append(yHat)
-YHat = np.array(YHat)
-
-
-
-# Target Test
-Y= []
-for i in range(len(targets_test)):
-    y = np.argmax(targets_test[i])
-    Y.append(y)
-Y = np.array(Y)
-
-
-for i in range(len(YHat)): 
-    print(i,":" , YHat[i] == Y[i])
-
-
-scorecard = []
-for i in range(len(YHat)): 
-    if (YHat[i] == Y[i]): 
-        scorecard.append(1)
-    else:                         
-        scorecard.append(0)
-        pass
-
-scorecard_array = np.asarray(scorecard)
-print ("performance OoS = ", scorecard_array.sum() /scorecard_array.size)
+## Prediction Test
+#YHat= []
+#for i in range(len(out)):
+#    yHat = np.argmax(out[i])
+#    YHat.append(yHat)
+#YHat = np.array(YHat)
+#
+#
+#
+## Target Test
+#Y= []
+#for i in range(len(targets_test)):
+#    y = np.argmax(targets_test[i])
+#    Y.append(y)
+#Y = np.array(Y)
+#
+#
+#for i in range(len(YHat)): 
+#    print(i,":" , YHat[i] == Y[i])
+#
+#
+#scorecard = []
+#for i in range(len(YHat)): 
+#    if (YHat[i] == Y[i]): 
+#        scorecard.append(1)
+#    else:                         
+#        scorecard.append(0)
+#        pass
+#
+#scorecard_array = np.asarray(scorecard)
+#print ("performance OoS = ", scorecard_array.sum() /scorecard_array.size)
 
 
 

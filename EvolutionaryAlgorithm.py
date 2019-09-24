@@ -13,12 +13,13 @@ from NeuralNetwork import NeuralNetwork
 
 class EvolutionaryAlgorithm:
     
-    def __init__(self, epochs, xTrain, yTrain, popSize, iterations):
+    def __init__(self, epochs, xTrain, yTrain, popSize, xTest, yTest):
         self.epochs = epochs
-        self.iterations = iterations
         self.popSize = popSize
         self.xTrain = xTrain
         self.yTrain = yTrain
+        self.xTest = xTest
+        self.yTest = yTest
         
         
     def randomPop(self):
@@ -46,22 +47,31 @@ class EvolutionaryAlgorithm:
         populationCopy = population.copy_pop(population)
         
         # mutation
-        for n in populationCopy.neuralNetwork:
-            
-            mutationAction(2, n) # manipulates a neural network 
+        for n in populationCopy.neuralNetworks:
+            ranInt = np.random.randint(4)+1 # get random integers from 1-4
+            mutationAction(ranInt, n) # manipulates a neural network 
             # add possibility that some networks get 1+x times mutated, where x is Poi(1) !!!!!!
         offSpringPopulation = populationCopy
         
         return offSpringPopulation
     
     
+    def predPop(self, population): 
+        for n in population.neuralNetworks:
+            n.predict(self.xTest, self.yTest)
+        pass
     
     
     
-    
-    def updatePop(self): 
+    def updatePop(self, popParent, popOffSpring): 
+        # if child dominates parent then replace parent
+        for i in range(popParent.popSize): 
+            if popParent.neuralNetworks[i].accuracyOOS < popOffSpring.neuralNetworks[i].accuracyOOS:
+                popParent.neuralNetworks[i] = popOffSpring.neuralNetworks[i] # replace parent by child
         
-        return 
+        
+        
+        return popParent
     
     
     

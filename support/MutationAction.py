@@ -4,30 +4,36 @@ import numpy as np
 
 from support.Layer import Layer
 from support.Parameters import randomActivationLayer
+from NeuralNetwork import NeuralNetwork
 
 # switch like statement
 
 
 def addLayer(neuralNetwork): # adds layer with XY neurons
-
-    # new layer
-    inputSize = np.random.randint(1,neuralNetwork.maxHiddenLayers+1) # random number for neurons of layer
-    layerNew = Layer(inputSize, neuralNetwork.sizeOutput) # outputsize form static variable
-    # new activation layer 
-    activationLayer = randomActivationLayer()
-    # adjust neighbor layer
-    # inputSize of the new Layer is outputSize of old
-    size = len(neuralNetwork.layers[-2].weights) # row length of weights
-    neuralNetwork.layers[-2].changeSize(neuralNetwork.layers[-2], size, inputSize)
-    neuralNetwork.add(layerNew)
-    neuralNetwork.add(activationLayer)
+    if len(neuralNetwork.layers) >= (4 + NeuralNetwork.maxHiddenLayers*2): # cause 4 is a network with no hidden layer
+        pass
+    else:
+        # new layer
+        inputSize = np.random.randint(1, NeuralNetwork.maxHiddenLayers+1) # random number for neurons of layer
+        layerNew = Layer(inputSize, NeuralNetwork.sizeOutput) # outputsize form static variable
+        # new activation layer 
+        activationLayer = randomActivationLayer()
+        # adjust neighbor layer
+        # inputSize of the new Layer is outputSize of old
+        size = len(neuralNetwork.layers[-2].weights) # row length of weights
+        neuralNetwork.layers[-2].changeSize(neuralNetwork.layers[-2], size, inputSize)
+        neuralNetwork.add(layerNew)
+        neuralNetwork.add(activationLayer)
 
 
 def rmvLayer(neuralNetwork): # removes layer
-    size = len(neuralNetwork.layers[-2].weights[0]) # col length
-    neuralNetwork.rmv(neuralNetwork.layers[-2]) # rmv second last layer
-    neuralNetwork.rmv(neuralNetwork.layers[-1])  # rmv last layer
-    neuralNetwork.layers[-2].changeSize(neuralNetwork.layers[-2], size, neuralNetwork.sizeOutput)
+    if len(neuralNetwork.layers) <= 4:
+        pass
+    else:
+        size = len(neuralNetwork.layers[-4].weights) # col length, -4 cause this will be the last non-activation layer
+        neuralNetwork.rmv(neuralNetwork.layers[-2]) # rmv second last layer
+        neuralNetwork.rmv(neuralNetwork.layers[-1])  # rmv last layer
+        neuralNetwork.layers[-2].changeSize(neuralNetwork.layers[-2], size, NeuralNetwork.sizeOutput)
 
 
 
@@ -46,7 +52,7 @@ def jitterNN(neuralNetwork):
 
 
 
-def five(direc):
+def five(neuralNetwork):
     
     
     pass

@@ -46,14 +46,14 @@ def initializeParameters(): # gives architecture of a NN
     return randLayerList
 
         
-def makeRandomLayer(maxNeurons, maxHiddenLayers, 
-                                   sizeInput, sizeOutput, popSize): # create random population
-    listANN = []
-    for i in range(popSize):
-        randomLayers = initializeParameters()
-        listANN.append(nn)
-        pass
-    return listANN # individuals are stored in this list 
+#def makeRandomLayer(maxNeurons, maxHiddenLayers, 
+#                                   sizeInput, sizeOutput, popSize): # create random population
+#    listANN = []
+#    for i in range(popSize):
+#        randomLayers = initializeParameters()
+#        listANN.append(nn)
+#        pass
+#    return listANN # individuals are stored in this list 
 
 
 

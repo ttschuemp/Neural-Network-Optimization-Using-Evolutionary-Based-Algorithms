@@ -44,7 +44,7 @@ for i in range(len(df)):
 
 
 n2.learningRate = 0.2
-n2.train(inputs, targets, epochs = 7)
+n2.train(inputs, targets, epochs = 1)
 
 df_test = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_test (1).csv", sep=',', header=None, index_col=False)
 inputs_test = (np.asfarray(df_test.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
@@ -55,36 +55,38 @@ for i in range(len(df_test)):
     targets_test[i,j] = 0.99  # all_values[0] is the target label for this record
     pass
 
-out = n2.predict(inputs_test)
-
-# Prediction Test
-YHat= []
-for i in range(len(out)):
-    yHat = np.argmax(out[i])
-    YHat.append(yHat)
-YHat = np.array(YHat)
+out = n2.predict(inputs_test, targets_test)
 
 
-
-# Target Test
-Y= []
-for i in range(len(targets_test)):
-    y = np.argmax(targets_test[i])
-    Y.append(y)
-Y = np.array(Y)
-
-scorecard = []
-for i in range(len(YHat)): 
-    if (YHat[i] == Y[i]): 
-        scorecard.append(1)
-    else:                         
-        scorecard.append(0)
-        pass
-
-scorecard_array = np.asarray(scorecard)
-print ("performance OoS = ", scorecard_array.sum() /scorecard_array.size)
-
-
-
-
-
+#
+## Prediction Test
+#YHat= []
+#for i in range(len(out)):
+#    yHat = np.argmax(out[i])
+#    YHat.append(yHat)
+#YHat = np.array(YHat)
+#
+#
+#
+## Target Test
+#Y= []
+#for i in range(len(targets_test)):
+#    y = np.argmax(targets_test[i])
+#    Y.append(y)
+#Y = np.array(Y)
+#
+#scorecard = []
+#for i in range(len(YHat)): 
+#    if (YHat[i] == Y[i]): 
+#        scorecard.append(1)
+#    else:                         
+#        scorecard.append(0)
+#        pass
+#
+#scorecard_array = np.asarray(scorecard)
+#print ("performance OoS = ", scorecard_array.sum() /scorecard_array.size)
+#
+#
+#
+#
+#
