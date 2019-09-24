@@ -8,6 +8,8 @@ class Layer(Layers):
     def __init__(self, inputSize, outputSize):
         self.weights = np.random.randn(inputSize, outputSize) * 0.1 # * 0.01 keep initial weights small
         self.bias = np.random.randn(1, outputSize) * 0.1
+        self.neurons = inputSize
+        
     
     def changeSize(self, layer, inputSize, outputSize):
         layer.weights = np.random.randn(inputSize, outputSize) * 0.1

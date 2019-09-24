@@ -13,7 +13,7 @@ from support.ActivationLayer import ActivationLayer
 
 class NeuralNetwork:
     #static variables 
-    maxNeurons = 200
+    maxNeurons = 450
     maxHiddenLayers = 4
     sizeInput = 784
     sizeOutput = 10
@@ -26,6 +26,8 @@ class NeuralNetwork:
         self.accuracyIS = float('NAN')
         self.accuracyOOS = float('NAN')
         self.result = []
+        self.err = float('NAN')
+        self.nrNeurons =  self.getNrNeurons()
 
     def add(self, layer): # add layer to NN
         self.layers.append(layer)
@@ -56,7 +58,7 @@ class NeuralNetwork:
         scorecard_arrayOOS = np.asarray(scorecardOOS)
         self.accuracyOOS = scorecard_arrayOOS.sum() /scorecard_arrayOOS.size
 #        print ("accuracyOOS = ", self.accuracyOOS)
-        pass
+
 
     # train the network
     def train(self, xTrain, yTrain, epochs):
@@ -64,7 +66,7 @@ class NeuralNetwork:
             lengthRow = len(xTrain[0])
             # training loop
             for i in range(epochs):
-                err = 0
+                self.err = 0
                 scorecardIS = []
                 for j in range(length): # for all col.
                     output = xTrain[j] # forward propagation, one sample 
@@ -73,7 +75,7 @@ class NeuralNetwork:
                         output = l.forwardPropagation(output) # output for each row of the training data
 
                     # compute loss (for display purpose only)
-                    err = err + self.loss(yTrain[j], output) # compare the output of each row with the target of this row/sample
+                    self.err = self.err + self.loss(yTrain[j], output) # compare the output of each row with the target of this row/sample
 #                    print("error", err)
 #                    print("Y:", np.argmax(yTrain[j]),"YHat:", np.argmax(output))
                     if (np.argmax(yTrain[j]) == np.argmax(output)): # append correct or incorrect to list
@@ -88,14 +90,23 @@ class NeuralNetwork:
 #                    print("error BP:", error)
                     for l in reversed(self.layers):     # Error is in example e 1x3 matrix/vector
                         error = l.backwardPropagation(error, self.learningRate)
-
                 # calculate average error on all samples
-                err /= length
+                self.err /= length
 #                print("av error: ", err)
                 scorecard_arrayIS = np.asarray(scorecardIS)
                 self.accuracyIS = scorecard_arrayIS.sum() /scorecard_arrayIS.size
 #                print ("accuracyIS = ", self.accuracyIS)
 
+    def getNrNeurons(self): #calculates nr of neurons without input and outputlayer, cause is anyway in every NN the same
+        #         calculate nr. of neurons
+        n = 2
+        i = 0
+        self.nrNeurons = 0
+        for l in self.layers: # loop over every second element in list
+            if i % n == 0 and i > 0: # i> 1 to skip the first layer
+                self.nrNeurons += l.neurons
+            i += 1
+        return self.nrNeurons
 
 
 

@@ -31,23 +31,31 @@ for i in range(len(df_test)):
 
 EA = EvolutionaryAlgorithm(epochs = 3, xTrain = inputs, yTrain = targets, 
                            popSize = 20, xTest = inputs_test, yTest =targets_test)
-iterations = 200
+iterations = 10
 
 
 initialPopulation = EA.randomPop()
 
 
 for i in range(iterations):
-
-    EA.trainPop(initialPopulation)
+    population = initialPopulation
+    EA.trainPop(population)
     
-    offSpring = EA.makeOffspring(initialPopulation)
+    offSpring = EA.makeOffspring(population)
+    
+    EA.trainPop(offSpring)
+    
     EA.predPop(offSpring)
-    EA.predPop(initialPopulation)
+    EA.predPop(population)
     
-    newPopParent=EA.updatePop(initialPopulation, offSpring)
     
-    initalPopulation= newPopParent
+    newPopParent=EA.updatePop(population, offSpring)
     
-    print(newPopParent.evaluatePop())
+    population = newPopParent
+    
+    population.evaluateNrNeurons()
+    
+    print("generation: ",i , newPopParent.evaluatePop())
     pass
+
+

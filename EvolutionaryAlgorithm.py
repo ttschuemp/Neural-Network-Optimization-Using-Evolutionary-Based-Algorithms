@@ -66,7 +66,7 @@ class EvolutionaryAlgorithm:
     def updatePop(self, popParent, popOffSpring): 
         # if child dominates parent then replace parent
         for i in range(popParent.popSize): 
-            if popParent.neuralNetworks[i].accuracyOOS < popOffSpring.neuralNetworks[i].accuracyOOS:
+            if popOffSpring.neuralNetworks[i].err < popParent.neuralNetworks[i].err:
                 popParent.neuralNetworks[i] = popOffSpring.neuralNetworks[i] # replace parent by child
         
         
