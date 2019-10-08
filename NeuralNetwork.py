@@ -32,8 +32,10 @@ class NeuralNetwork:
     def add(self, layer): # add layer to NN
         self.layers.append(layer)
 
+
     def rmv(self, layer):
         self.layers.remove(layer)
+
 
     # predict output for given input
     def predict(self, inputTest, targetTest): # for predicting you need forwardPropagation only cause network already trained

@@ -1,6 +1,5 @@
 # EvolutionaryAlgorithm.py 
 
-
 import numpy as np
 
 from Population import Population
@@ -61,19 +60,33 @@ class EvolutionaryAlgorithm:
             n.predict(self.xTest, self.yTest)
         pass
     
-    
+    def rmvDominatedNN(self, population): 
+        for n in population.neuralNetworks: 
+            for m in population.neuralNetworks: 
+                if(n.err > m.err and n.nrNeurons > m.nrNeurons):
+                    population.rmv_NN(n) 
+                    break
+                    
+                    
+                    
+    def markDominatingNN(self, population):
+        
+        pass
     
     def updatePop(self, popParent, popOffSpring): 
         # if child dominates parent then replace parent
         for i in range(popParent.popSize): 
             if popOffSpring.neuralNetworks[i].err < popParent.neuralNetworks[i].err:
-                popParent.neuralNetworks[i] = popOffSpring.neuralNetworks[i] # replace parent by child
-        
-        
+                popParent.neuralNetworks[i] = popOffSpring.neuralNetworks[i]
         
         return popParent
     
-    
-    
-    
-
+#    
+#    
+#    
+#            if dominance[0] == True and dominance[1] == True: # if both true then its a dominated solution # np.greater() compares every element in the list and returns bool
+#                #dominant solution
+#                popParent.neuralNetworks[i] = popOffSpring.neuralNetworks[i] # replace parent by child
+#            
+#            if dominance[0] == True and dominance[1] == False:
+#                popParent.neuralNetworks[i] = popOffSpring.neuralNetworks[i]

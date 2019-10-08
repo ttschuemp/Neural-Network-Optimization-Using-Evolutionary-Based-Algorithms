@@ -11,7 +11,7 @@ class Population:
         self.neuralNetworks = neuralNetworks
         self.averageAccIS = float('NAN')
         self.averageAccOOS = float('NAN')
-        self.elitestNN = "NaN"
+        self.elitestNN = []
         self.averageErr = float('NAN')
         self.averageNeurons = float('NAN')
 

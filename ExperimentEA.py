@@ -26,36 +26,45 @@ for i in range(len(df_test)):
     j = df_test.iloc[i,0]
     j=int(j)
     targets_test[i,j] = 0.99  # all_values[0] is the target label for this record
-    pass
+    
 
 
+## initialize ##
 EA = EvolutionaryAlgorithm(epochs = 3, xTrain = inputs, yTrain = targets, 
-                           popSize = 20, xTest = inputs_test, yTest =targets_test)
-iterations = 10
+                           popSize = 10, xTest = inputs_test, yTest =targets_test)
+iterations = 4
 
-
+# random initial population
 initialPopulation = EA.randomPop()
 
-
+## search ##
 for i in range(iterations):
     population = initialPopulation
+    
+    # train population
     EA.trainPop(population)
     
+    # reproduction and mutation
     offSpring = EA.makeOffspring(population)
     
+    # train off spring
     EA.trainPop(offSpring)
     
+    # predict on test data set
     EA.predPop(offSpring)
     EA.predPop(population)
     
-    
-    newPopParent=EA.updatePop(population, offSpring)
+    # tournement selection
+    newPopParent = EA.updatePop(population, offSpring)
     
     population = newPopParent
     
+## report ##
     population.evaluateNrNeurons()
     
     print("generation: ",i , newPopParent.evaluatePop())
-    pass
+    
+
+
 
 
