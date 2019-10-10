@@ -1,8 +1,9 @@
 # ExperimentEA.py
-
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from EvolutionaryAlgorithm import EvolutionaryAlgorithm
+from Population import Population
 
 
 
@@ -60,9 +61,9 @@ for i in range(iterations):
     population = newPopParent
     
 ## report ##
-    population.evaluateNrNeurons()
+
     
-    print("generation: ",i , newPopParent.evaluatePop())
+    print("generation: ",i , population.evaluatePop())
     
 
 

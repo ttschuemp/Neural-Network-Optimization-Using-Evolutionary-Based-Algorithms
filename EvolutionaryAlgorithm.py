@@ -6,6 +6,7 @@ from Population import Population
 from support.Parameters import initializeParameters
 from support.MutationAction import mutationAction
 from NeuralNetwork import NeuralNetwork
+from support.evaluation_selection import singleobjective
 
 # Initialization
 
@@ -60,24 +61,15 @@ class EvolutionaryAlgorithm:
             n.predict(self.xTest, self.yTest)
         pass
     
-    def rmvDominatedNN(self, population): 
-        for n in population.neuralNetworks: 
-            for m in population.neuralNetworks: 
-                if(n.err > m.err and n.nrNeurons > m.nrNeurons):
-                    population.rmv_NN(n) 
-                    break
-                    
-                    
-                    
-    def markDominatingNN(self, population):
-        
-        pass
-    
+
+
     def updatePop(self, popParent, popOffSpring): 
         # if child dominates parent then replace parent
-        for i in range(popParent.popSize): 
-            if popOffSpring.neuralNetworks[i].err < popParent.neuralNetworks[i].err:
-                popParent.neuralNetworks[i] = popOffSpring.neuralNetworks[i]
+        
+        #NDSAII()
+        
+        popParent = singleobjective(popParent, popOffSpring)
+
         
         return popParent
     
