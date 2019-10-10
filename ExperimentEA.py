@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from EvolutionaryAlgorithm import EvolutionaryAlgorithm
 from Population import Population
+from support.evaluation_selection import fast_nondominated_sort
 
 
 
@@ -33,7 +34,7 @@ for i in range(len(df_test)):
 ## initialize ##
 EA = EvolutionaryAlgorithm(epochs = 3, xTrain = inputs, yTrain = targets, 
                            popSize = 10, xTest = inputs_test, yTest =targets_test)
-iterations = 4
+iterations = 2
 
 # random initial population
 initialPopulation = EA.randomPop()
@@ -65,7 +66,5 @@ for i in range(iterations):
     
     print("generation: ",i , population.evaluatePop())
     
-
-
 
 

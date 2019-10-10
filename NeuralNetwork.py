@@ -28,6 +28,8 @@ class NeuralNetwork:
         self.result = []
         self.err = float('NAN')
         self.nrNeurons =  self.getNrNeurons()
+        self.solution = [] # variable for NSGAII
+        self.ndominated = 0 # variable for NSGAII
 
     def add(self, layer): # add layer to NN
         self.layers.append(layer)

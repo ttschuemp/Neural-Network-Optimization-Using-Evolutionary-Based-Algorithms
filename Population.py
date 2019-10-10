@@ -24,7 +24,7 @@ class Population:
     def copy_pop(self, population): 
         populationCopy = copy.deepcopy(population)
         return populationCopy
-    
+        
     def evaluatePop(self): 
         # in sample
         totalIS = 0.0
