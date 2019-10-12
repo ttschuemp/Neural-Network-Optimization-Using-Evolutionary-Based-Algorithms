@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from EvolutionaryAlgorithm import EvolutionaryAlgorithm
 from Population import Population
-from support.evaluation_selection import fast_nondominated_sort
+from NSGAII import NSGAII
 
 
 
@@ -34,36 +34,35 @@ for i in range(len(df_test)):
 ## initialize ##
 EA = EvolutionaryAlgorithm(epochs = 3, xTrain = inputs, yTrain = targets, 
                            popSize = 10, xTest = inputs_test, yTest =targets_test)
-iterations = 2
+iterations = 20
 
 # random initial population
 initialPopulation = EA.randomPop()
+nsga = NSGAII()
 
+population = initialPopulation
 ## search ##
 for i in range(iterations):
-    population = initialPopulation
-    
+  
     # train population
     EA.trainPop(population)
-    
+ 
     # reproduction and mutation
     offSpring = EA.makeOffspring(population)
-    
+  
     # train off spring
-    EA.trainPop(offSpring)
-    
+    EA.trainPop(offSpring) # RuntimeWarning: overflow
+   
     # predict on test data set
     EA.predPop(offSpring)
     EA.predPop(population)
-    
-    # tournement selection
-    newPopParent = EA.updatePop(population, offSpring)
-    
+ 
+    # evaluation & selection
+#    newPopParent = EA.updatePop(population, offSpring)
+    newPopParent = nsga.run(population, offSpring)
+ 
     population = newPopParent
-    
 ## report ##
-
-    
     print("generation: ",i , population.evaluatePop())
     
 

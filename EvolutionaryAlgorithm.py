@@ -66,11 +66,9 @@ class EvolutionaryAlgorithm:
     def updatePop(self, popParent, popOffSpring): 
         # if child dominates parent then replace parent
         
-        #multiObjectiveSorting_NSGAII()
         
         popParent = singleobjective(popParent, popOffSpring)
 
-        
         return popParent
     
 #    

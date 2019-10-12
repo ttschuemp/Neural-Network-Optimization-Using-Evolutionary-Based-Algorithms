@@ -30,6 +30,8 @@ class NeuralNetwork:
         self.nrNeurons =  self.getNrNeurons()
         self.solution = [] # variable for NSGAII
         self.ndominated = 0 # variable for NSGAII
+        self.crowdingDistance = float('NAN') # variable for NSGAII
+        self.dominantRank = float('NAN') # variable for NSGAII
 
     def add(self, layer): # add layer to NN
         self.layers.append(layer)

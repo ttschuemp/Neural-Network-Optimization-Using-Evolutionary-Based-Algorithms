@@ -9,7 +9,15 @@ def singleobjective(parent, offspring):
     return newparent
 
 
-def fast_nondominated_sort(population): 
+def getLofDirecList(direc):
+    lgth = 0
+    for d in range(1,len(direc)+1):
+       lgth += len(direc[d])
+    return lgth
+
+
+def fast_nondominated_sort(population): #ranks population
+    size = (population.popSize/2)
     counter = 1
     front = {}
     front[(counter)] = [] # make a list of directories
@@ -25,6 +33,7 @@ def fast_nondominated_sort(population):
         # if p wasn't dominated by any q then ndominated == 0
         if(p.ndominated == 0):  # then p is a member of first front (best front)
             front[(counter)].append(p)
+            p.dominantRank = counter 
 
 # so far front 1 has been found
     counter = 1
@@ -37,10 +46,57 @@ def fast_nondominated_sort(population):
                     H.append(q)
         counter += 1
         front[(counter)] = H
+        for t in front[(counter)]:
+            t.dominantRank = counter
             
+    # size of front to small to get a new population? 
+       
+    lgth = getLofDirecList(front)
+    print("front länge:",lgth)
+    while(lgth < size):
+        print("ussed")
+        for i in range(1,len(front)+1):
+            new_front = front[(i)].copy()
+            front[(i)].extend(new_front)
+        lgth = getLofDirecList(front)
             
-            
-    
+       
     return front #list
+
+# help functions for sort()
+
+def takeErr(elem):
+    
+    return elem.err
+
+def takeNrNeurons(elem):
+    
+    return elem.nrNeurons
+
+#
+
+def crowding_distance_assignment(setI): 
+    length = len(setI)
+    for i in setI: 
+        i.crowdingDistance = 0 # initialise crowding distance with 0 
+    setI.sort(key = takeErr) #sort list according to error
+    setI[0].crowdingDistance = 99999 #inf 
+    setI[-1].crowdingDistance = 99999 #inf 
+    # for all other points
+    for j in range(1, length-1): 
+        setI[j].crowdingDistance += (setI[j+1].err - setI[j-1].err)
+        
+    setI.sort(key = takeNrNeurons) #sort list according to nrNeurons
+    setI[0].crowdingDistance = 99999
+    setI[-1].crowdingDistance = 99999
+    for j in range(1, length-1): 
+        setI[j].crowdingDistance += (setI[j+1].nrNeurons - setI[j-1].nrNeurons)/setI[0].maxNeurons # divide by max number...
+        #of neurons such that neurons have not higher impact
+        
+        
+        
+    
+    
+    
 
 
