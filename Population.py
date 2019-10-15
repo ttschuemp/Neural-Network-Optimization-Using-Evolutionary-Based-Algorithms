@@ -32,15 +32,14 @@ class Population:
             totalIS += n.accuracyIS
             self.averageAccIS = totalIS/self.popSize
             pass
+        self.evaluateNrNeurons()
         
         # out of sample 
         totalOOS = 0.0
         totalErr = 0.0
-        elitesErr = 99999 # just a high number for initialization
         for n in self.neuralNetworks: 
-            if n.err < elitesErr:
-                self.elitestNN = n
-                elitesErr = n.err
+            if n.dominantRank == 1:
+                self.elitestNN.append(n)
                 pass
             # average Accuracy over pop out of sample
             totalOOS += n.accuracyOOS
@@ -50,7 +49,7 @@ class Population:
             self.averageErr = totalErr/self.popSize
             
 
-        return self.averageAccIS, self.averageAccOOS, self.averageErr;
+        return self.averageAccIS, self.averageAccOOS, self.averageErr, self.averageNeurons;
     
     def evaluateNrNeurons(self): 
         totalNeurons = 0

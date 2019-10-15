@@ -1,6 +1,7 @@
 # EvolutionaryAlgorithm.py 
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from Population import Population
 from support.Parameters import initializeParameters
@@ -26,7 +27,9 @@ class EvolutionaryAlgorithm:
         NNlist = []
         for i in range(self.popSize):
             randomLayers = initializeParameters()
-            lr = np.random.rand(1) # learning rate random
+            sigma = 0.1
+            mu = 0.5
+            lr = abs(sigma * np.random.randn() + mu) # learning rate random from a normal distribution
             nn = NeuralNetwork(randomLayers, learningRate = lr)
             NNlist.append(nn)
             pass

@@ -13,10 +13,10 @@ from support.ActivationLayer import ActivationLayer
 
 class NeuralNetwork:
     #static variables 
-    maxNeurons = 450
-    maxHiddenLayers = 4
-    sizeInput = 784
-    sizeOutput = 10
+    maxNeurons = 250
+    maxHiddenLayers = 5
+    sizeInput = 6
+    sizeOutput = 3
     
     def __init__(self, layerList, loss = mse, lossDerivative = mseDerivative, learningRate = 0.15):
         self.layers = layerList
