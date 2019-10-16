@@ -10,7 +10,7 @@ from support.Bootstrap import bootstrap
 
 matplotlib.use('MacOSX')
 plt.style.use("seaborn-whitegrid")
-
+#--------------------------------------------------------------------------------
 #df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_train_100.csv", sep=',', header=None, index_col=False)
 #
 #
@@ -31,27 +31,51 @@ plt.style.use("seaborn-whitegrid")
 #    j=int(j)
 #    targets_test[i,j] = 0.99  # all_values[0] is the target label for this record
 #    
-
+#--------------------------------------------------------------------------------
 df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/Wholesale customers data.csv", sep=',')
 
 
-inputs = (np.asfarray(df.iloc[:,2:8]) / 112152.0 * 0.99) + 0.01 # scale and shift the inputs
-targets = np.zeros((440,3)) + 0.01 # create target output values
-for i in range(len(df)):
-    targets[i,(df.iloc[i,1]-1)] = 0.99  # all_values[0] is the target label for this record
-    pass
-
 dfTrain, dfTest = bootstrap(df)
 
-inputsTrain = dfTrain.iloc[:,2:]
-targetsTrain = dfTrain[['Region']]
+xTrainDf= dfTrain.iloc[:,2:]
+yTrainDf = dfTrain[['Region']]
 
-inputsTest = dfTest.iloc[:,2:]
-targetsTest = dfTest[['Region']]
+xTestDf = dfTest.iloc[:,2:]
+yTestDf = dfTest[['Region']]
+
+# Transform input 
+xTrainDf = (xTrainDf/112152.0*0.99) + 0.01 # scale and shift the inputs
+
+r,c = yTrainDf.shape
+index= np.asarray(yTrainDf)
+yTrainDf = np.zeros((r,3)) + 0.01 # create target output values
+for i in range(r):
+    yTrainDf[i,(index[i]-1)] = 0.99  # all_values[0] is the target label for this record
+    pass
+
+xTestDf = (xTestDf/112152.0*0.99) + 0.01 # scale and shift the inputs
+
+r,c = yTestDf.shape
+index= np.asarray(yTestDf)
+yTestDf = np.zeros((r,3)) + 0.01 # create target output values
+for i in range(r):
+    yTestDf[i,(index[i]-1)] = 0.99  # all_values[0] is the target label for this record
+    pass
+
+inputsTrain = np.asfarray(xTrainDf)
+inputsTest = np.asfarray(xTestDf)
+targetsTrain = yTrainDf
+targetsTest = yTestDf
+
+
+#--------------------------------------------------------------------------------
+    
+
+
 
 ## initialize ##
-EA = EvolutionaryAlgorithm(epochs = 2, xTrain = inputsTrain, yTrain = targetsTrain, 
-                           popSize = 30, xTest = inputsTest, yTest = targetsTest)
+EA = EvolutionaryAlgorithm(epochs = 15, xTrain = inputsTrain, yTrain = targetsTrain, 
+                           popSize = 10, xTest = inputsTest, yTest = targetsTest)
 
 
 colours = ['bo', 'gx', 'r*', 'cv', 'm1', 'y2', 'k3', 'w4']
@@ -64,7 +88,7 @@ population = initialPopulation
 
 
 ## search ##
-iterations = 3
+iterations = 8
 for i in range(iterations):
   
     # train population
@@ -83,7 +107,10 @@ for i in range(iterations):
     # evaluation & selection
 #    newPopParent = EA.updatePop(population, offSpring)
     newPopParent = nsga.run(population, offSpring)
- 
+    
+    if newPopParent == "front to small": 
+        continue
+    
     population = newPopParent
     for n in population.neuralNetworks:
         plt.plot(n.err,n.nrNeurons, colours[i], markersize=10)

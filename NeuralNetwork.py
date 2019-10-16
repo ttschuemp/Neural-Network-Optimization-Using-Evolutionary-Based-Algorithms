@@ -68,8 +68,7 @@ class NeuralNetwork:
 
     # train the network
     def train(self, xTrain, yTrain, epochs):
-            length = len(xTrain) # sample dimension first
-            lengthRow = len(xTrain[0])
+            length, lengthRow = xTrain.shape # sample dimension first
             # training loop
             for i in range(epochs):
                 self.err = 0
@@ -101,7 +100,8 @@ class NeuralNetwork:
 #                print("av error: ", err)
                 scorecard_arrayIS = np.asarray(scorecardIS)
                 self.accuracyIS = scorecard_arrayIS.sum() /scorecard_arrayIS.size
-#                print ("accuracyIS = ", self.accuracyIS)
+            self.learningRate *= 0.9 #learning rate that cools down 
+
 
     def getNrNeurons(self): #calculates nr of neurons without input and outputlayer, cause is anyway in every NN the same
         #         calculate nr. of neurons

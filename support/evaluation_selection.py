@@ -53,14 +53,11 @@ def fast_nondominated_sort(population): #ranks population
        
     lgth = getLofDirecList(front)
     print("front länge:",lgth)
-    while(lgth < size):
-        print("ussed")
-        for i in range(1,len(front)+1):
-            new_front = front[(i)].copy()
-            front[(i)].extend(new_front)
-        lgth = getLofDirecList(front)
+    if(lgth < size):
+        front = []
+        return front 
             
-       
+        
     return front #list
 
 # help functions for sort()

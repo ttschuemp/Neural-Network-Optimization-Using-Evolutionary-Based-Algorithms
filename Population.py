@@ -40,6 +40,7 @@ class Population:
         for n in self.neuralNetworks: 
             if n.dominantRank == 1:
                 self.elitestNN.append(n)
+                print("Best NN: ","IS: ", n.accuracyIS, "OS: ", n.accuracyOOS, "nrNeurons: ", n.nrNeurons)
                 pass
             # average Accuracy over pop out of sample
             totalOOS += n.accuracyOOS

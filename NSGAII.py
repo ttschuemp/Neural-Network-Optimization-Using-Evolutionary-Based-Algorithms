@@ -12,7 +12,8 @@ class NSGAII:
         combPop = Population(parent.neuralNetworks + offspring.neuralNetworks) # combine the two populations
         
         front = fast_nondominated_sort(combPop)
-        
+        if len(front) == 0:
+            return "front to small"
         # add first front until > popSize
         newParentList = []
         counter = 1
