@@ -6,6 +6,8 @@ def singleobjective(parent, offspring):
         if offspring.neuralNetworks[i].err < parent.neuralNetworks[i].err:
             parent.neuralNetworks[i] = offspring.neuralNetworks[i]
             newparent = parent 
+        else:
+            return parent
     return newparent
 
 

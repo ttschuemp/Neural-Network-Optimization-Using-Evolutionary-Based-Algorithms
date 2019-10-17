@@ -13,10 +13,10 @@ from support.ActivationLayer import ActivationLayer
 
 class NeuralNetwork:
     #static variables 
-    maxNeurons = 250
-    maxHiddenLayers = 5
-    sizeInput = 6
-    sizeOutput = 3
+    maxNeurons = 10
+    maxHiddenLayers = 1
+    sizeInput = 3
+    sizeOutput = 2
     
     def __init__(self, layerList, loss = mse, lossDerivative = mseDerivative, learningRate = 0.15):
         self.layers = layerList
@@ -68,14 +68,14 @@ class NeuralNetwork:
 
     # train the network
     def train(self, xTrain, yTrain, epochs):
-            length, lengthRow = xTrain.shape # sample dimension first
+            r, d = xTrain.shape # sample dimension first
             # training loop
             for i in range(epochs):
                 self.err = 0
                 scorecardIS = []
-                for j in range(length): # for all col.
+                for j in range(r): # for all col.
                     output = xTrain[j] # forward propagation, one sample 
-                    output = np.reshape(output,(1, lengthRow))
+                    output = np.reshape(output,(1, d))
                     for l in self.layers:
                         output = l.forwardPropagation(output) # output for each row of the training data
 
@@ -96,7 +96,7 @@ class NeuralNetwork:
                     for l in reversed(self.layers):     # Error is in example e 1x3 matrix/vector
                         error = l.backwardPropagation(error, self.learningRate)
                 # calculate average error on all samples
-                self.err /= length
+                self.err /= r
 #                print("av error: ", err)
                 scorecard_arrayIS = np.asarray(scorecardIS)
                 self.accuracyIS = scorecard_arrayIS.sum() /scorecard_arrayIS.size

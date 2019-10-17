@@ -27,21 +27,20 @@ layerList = [inputLayer, activationFunction, hiddenLayer, activationFunction2,
 
 nn= NeuralNetwork(layerList, mse, mseDerivative)
 
-# training data
-x_train = np.array([[0,0], [0,1], [1,0], [1,1]])
-y_train = np.array([[0], [1], [1], [0]])
+## training data
+#x_train = np.array([[0,0], [0,1], [1,0], [1,1]])
+#y_train = np.array([[0], [1], [1], [0]])
 
 
 
 
-
-#inputs = [[0.1,0.9,0.9],[0.9,0.9,0.1],[0.9,0.1,0.1],[0.1,0.1,0.9]]
 #
-#inputs = np.array(inputs)
-#
-#targets = np.array([0.1,0.9,0.9,0.1])
+#inputs = np.array(([0.01,0.99,0.99],[0.99,0.99,0.01],[0.99,0.01,0.01],[0.01,0.01,0.99]))
 #
 #
+#targets = np.array(([0.99,0.01], [0.01,0.99], [0.01,0.99], [0.99,0.01]))
+
+
 #nn.train(inputs, targets, 1)
 
 # load the data into a list
@@ -64,7 +63,7 @@ for i in range(len(df)):
     pass
 
 nn.learningRate = 0.3
-nn.train(inputs, targets, epochs = 3)
+nn.train(inputs, targets, epochs = 4)
 
 df_test = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_test_10.csv", sep=',', header=None, index_col=False)
 inputs_test = (np.asfarray(df_test.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
