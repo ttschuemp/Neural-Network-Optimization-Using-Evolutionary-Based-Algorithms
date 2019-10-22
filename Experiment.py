@@ -8,16 +8,16 @@ from NeuralNetwork import NeuralNetwork
 from support.Layer import Layer
 from support.ActivationLayer import ActivationLayer
 from support.Loss_n_ActivationFunction import tanh, tanhDerivative, sigmoid, sigmoidDerivative, mse, mseDerivative
+from support.Bootstrap import bootstrap
 
 
-
-inputLayer = Layer(784, 100)
+inputLayer = Layer(3, 10)
 activationFunction = ActivationLayer(tanh, tanhDerivative)
-hiddenLayer = Layer(100, 80)
+hiddenLayer = Layer(10, 5)
 activationFunction2 = ActivationLayer(tanh, tanhDerivative)
 #hiddenLayer2 = Layer(300, 30)
 #activationFunction3 = ActivationLayer(sigmoid, sigmoidDerivative)
-outputLayer = Layer(80, 10)
+outputLayer = Layer(5, 2)
 activationFunction4 = ActivationLayer(tanh, tanhDerivative)
 
 
@@ -35,46 +35,46 @@ nn= NeuralNetwork(layerList, mse, mseDerivative)
 
 
 #
-#inputs = np.array(([0.01,0.99,0.99],[0.99,0.99,0.01],[0.99,0.01,0.01],[0.01,0.01,0.99]))
+inputs = np.array(([0.01,0.99,0.99],[0.99,0.99,0.01],[0.99,0.01,0.01],[0.01,0.01,0.99]))
 #
 #
-#targets = np.array(([0.99,0.01], [0.01,0.99], [0.01,0.99], [0.99,0.01]))
+targets = np.array(([0.99,0.01], [0.01,0.99], [0.01,0.99], [0.99,0.01]))
 
 
-#nn.train(inputs, targets, 1)
+nn.train(inputs, targets, epochs = 100, Rprop = True)
+#nn.predict(inputs, targets)
 
 # load the data into a list
-df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_train_100.csv", sep=',', header=None, index_col=False)
-
+#df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_train_100.csv", sep=',', header=None, index_col=False)
+#
 
 
 # go through all records in the training data set
 
 
 
-
-
-inputs = (np.asfarray(df.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
-targets = np.zeros((100,10)) + 0.01 # create target output values
-for i in range(len(df)):
-    j = df.iloc[i,0]
-    j=int(j)
-    targets[i,j] = 0.99  # all_values[0] is the target label for this record
-    pass
-
-nn.learningRate = 0.3
-nn.train(inputs, targets, epochs = 4)
-
-df_test = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_test_10.csv", sep=',', header=None, index_col=False)
-inputs_test = (np.asfarray(df_test.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
-targets_test = np.zeros((10,10)) + 0.01 # create target output values
-for i in range(len(df_test)):
-    j = df_test.iloc[i,0]
-    j=int(j)
-    targets_test[i,j] = 0.99  # all_values[0] is the target label for this record
-    pass
-
-out = nn.predict(inputs_test, targets_test)
+#
+#
+#inputs = (np.asfarray(df.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
+#targets = np.zeros((100,10)) + 0.01 # create target output values
+#for i in range(len(df)):
+#    j = df.iloc[i,0]
+#    j=int(j)
+#    targets[i,j] = 0.99  # all_values[0] is the target label for this record
+#    pass
+#nn.learningRate = 0.35
+#nn.train(inputs, targets, epochs = 10, Rprop = False)
+#
+#df_test = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_test_10.csv", sep=',', header=None, index_col=False)
+#inputs_test = (np.asfarray(df_test.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
+#targets_test = np.zeros((10,10)) + 0.01 # create target output values
+#for i in range(len(df_test)):
+#    j = df_test.iloc[i,0]
+#    j=int(j)
+#    targets_test[i,j] = 0.99  # all_values[0] is the target label for this record
+#    pass
+#
+#out = nn.predict(inputs, targets)
 
 ## Prediction Test
 #YHat= []
@@ -140,7 +140,7 @@ out = nn.predict(inputs_test, targets_test)
 #
 
 
-
+#
 ## random test input
 #Input_test = np.random.randn(2000,6)
 #Target_test = np.zeros((2000,3))+0.01
@@ -148,8 +148,10 @@ out = nn.predict(inputs_test, targets_test)
 #    n=np.random.randint(3)
 #    Target_test[i,n] = 0.99
 #    pass
-#
+
 #df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/Wholesale customers data.csv", sep=',')
+#
+#
 #
 #
 #inputs = (np.asfarray(df.iloc[:,2:8]) / 112152.0 * 0.99) + 0.01 # scale and shift the inputs
@@ -160,10 +162,10 @@ out = nn.predict(inputs_test, targets_test)
 #
 ## Train
 #
-#nn.train(inputs, targets, epochs = 10, batchSize = 60)
+#nn.train(inputs, targets, epochs = 1, Rprop = True)
 #
 ## test
-##nn.predict(inputs[0:280])
+#nn.predict(inputs[0:280], targets[0:280])
 
 
 

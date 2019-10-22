@@ -20,7 +20,7 @@ class Layers(ABC):
         pass
 
     @abstractmethod
-    def backwardPropagation(self, outputError, learningRate):
+    def backwardPropagation(self, outputError, learningRate, Rprop = False):
         #
         # computes the derivative of the error with respect to
         # its input (dE/dX) given derivative of the error with

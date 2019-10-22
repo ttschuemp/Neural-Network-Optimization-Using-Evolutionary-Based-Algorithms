@@ -8,7 +8,7 @@ from NeuralNetwork import NeuralNetwork
 from support.Layer import Layer
 from support.ActivationLayer import ActivationLayer
 from support.Loss_n_ActivationFunction import tanh, tanhDerivative, sigmoid, sigmoidDerivative, mse, mseDerivative
-
+from support.Bootstrap import bootstrap
 
 
 inputLayer = Layer(784, 100)
@@ -31,31 +31,32 @@ n2= NeuralNetwork(layerList, mse, mseDerivative)
 
 
 df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_train (1).csv", sep=',', header=None, index_col=False)
+dfTrain, dfTest = bootstrap(df.iloc[0:1500,:])
 
 
-
-inputs = (np.asfarray(df.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
-targets = np.zeros((len(df),10)) + 0.01 # create target output values
-for i in range(len(df)):
-    j = df.iloc[i,0]
+inputs = (np.asfarray(dfTrain.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
+targets = np.zeros((len(dfTrain),10)) + 0.01 # create target output values
+for i in range(len(dfTrain)):
+    j = dfTrain.iloc[i,0]
     j=int(j)
     targets[i,j] = 0.99  # all_values[0] is the target label for this record
     pass
 
 
-n2.learningRate = 0.2
-n2.train(inputs, targets, epochs = 1)
+n2.learningRate = 0.3
 
-df_test = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_test (1).csv", sep=',', header=None, index_col=False)
-inputs_test = (np.asfarray(df_test.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
-targets_test = np.zeros((len(df_test),10)) + 0.01 # create target output values
-for i in range(len(df_test)):
-    j = df_test.iloc[i,0]
-    j=int(j)
-    targets_test[i,j] = 0.99  # all_values[0] is the target label for this record
-    pass
+n2.train(inputs[0:100,:], targets[0:100,:], epochs = 20, Rprop = False)
 
-out = n2.predict(inputs_test, targets_test)
+#df_test = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_test (1).csv", sep=',', header=None, index_col=False)
+#inputs_test = (np.asfarray(df_test.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
+#targets_test = np.zeros((len(df_test),10)) + 0.01 # create target output values
+#for i in range(len(df_test)):
+#    j = df_test.iloc[i,0]
+#    j=int(j)
+#    targets_test[i,j] = 0.99  # all_values[0] is the target label for this record
+#    pass
+
+#out = n2.predict(inputs_test[200:250,:], targets_test[200:250,:])
 
 
 #

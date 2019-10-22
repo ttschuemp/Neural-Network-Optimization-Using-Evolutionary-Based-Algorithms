@@ -3,18 +3,20 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 
 from support.Layer import Layer
 from support.Loss_n_ActivationFunction import tanh, tanhDerivative, sigmoid, sigmoidDerivative, mse, mseDerivative
 from support.ActivationLayer import ActivationLayer
 
-
+matplotlib.use('MacOSX')
+plt.style.use("seaborn-whitegrid")
 
 
 class NeuralNetwork:
     #static variables 
-    maxNeurons = 10
-    maxHiddenLayers = 1
+    maxNeurons = 500
+    maxHiddenLayers = 4
     sizeInput = 3
     sizeOutput = 2
     
@@ -26,7 +28,7 @@ class NeuralNetwork:
         self.accuracyIS = float('NAN')
         self.accuracyOOS = float('NAN')
         self.result = []
-        self.err = float('NAN')
+        self.err = []
         self.nrNeurons =  self.getNrNeurons()
         self.solution = [] # variable for NSGAII
         self.ndominated = 0 # variable for NSGAII
@@ -67,11 +69,11 @@ class NeuralNetwork:
 
 
     # train the network
-    def train(self, xTrain, yTrain, epochs):
+    def train(self, xTrain, yTrain, epochs, Rprop = False):
             r, d = xTrain.shape # sample dimension first
             # training loop
             for i in range(epochs):
-                self.err = 0
+                err = 0
                 scorecardIS = []
                 for j in range(r): # for all col.
                     output = xTrain[j] # forward propagation, one sample 
@@ -80,8 +82,8 @@ class NeuralNetwork:
                         output = l.forwardPropagation(output) # output for each row of the training data
 
                     # compute loss (for display purpose only)
-                    self.err = self.err + self.loss(yTrain[j], output) # compare the output of each row with the target of this row/sample
-#                    print("error", err)
+                    err = err + self.loss(yTrain[j], output) # compare the output of each row with the target of this row/sample
+#                    print("error", self.err)
 #                    print("Y:", np.argmax(yTrain[j]),"YHat:", np.argmax(output))
                     if (np.argmax(yTrain[j]) == np.argmax(output)): # append correct or incorrect to list
                          # network's answer matches correct answer, add 1 to scorecard
@@ -94,13 +96,16 @@ class NeuralNetwork:
                     error = self.lossDerivative(yTrain[j], output) # wholesale example output is 1x3 and target is 1x3
 #                    print("error BP:", error)
                     for l in reversed(self.layers):     # Error is in example e 1x3 matrix/vector
-                        error = l.backwardPropagation(error, self.learningRate)
+                        error = l.backwardPropagation(error, self.learningRate, Rprop = Rprop)
                 # calculate average error on all samples
-                self.err /= r
-#                print("av error: ", err)
+                err /= r
+                self.err.append(err)
+                print("av error: ", err)
+                
                 scorecard_arrayIS = np.asarray(scorecardIS)
                 self.accuracyIS = scorecard_arrayIS.sum() /scorecard_arrayIS.size
-            self.learningRate *= 0.9 #learning rate that cools down 
+            plt.plot(range(epochs), self.err, markersize=3)
+            plt.show()
 
 
     def getNrNeurons(self): #calculates nr of neurons without input and outputlayer, cause is anyway in every NN the same
