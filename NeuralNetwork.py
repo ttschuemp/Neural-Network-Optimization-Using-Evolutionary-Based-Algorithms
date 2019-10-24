@@ -15,10 +15,10 @@ plt.style.use("seaborn-whitegrid")
 
 class NeuralNetwork:
     #static variables 
-    maxNeurons = 500
+    maxNeurons = 300
     maxHiddenLayers = 4
-    sizeInput = 3
-    sizeOutput = 2
+    sizeInput = 2
+    sizeOutput = 1
     
     def __init__(self, layerList, loss = mse, lossDerivative = mseDerivative, learningRate = 0.15):
         self.layers = layerList
@@ -100,12 +100,12 @@ class NeuralNetwork:
                 # calculate average error on all samples
                 err /= r
                 self.err.append(err)
-                print("av error: ", err)
+#                print("av error: ", err)
                 
                 scorecard_arrayIS = np.asarray(scorecardIS)
                 self.accuracyIS = scorecard_arrayIS.sum() /scorecard_arrayIS.size
-            plt.plot(range(epochs), self.err, markersize=3)
-            plt.show()
+#            plt.plot(range(epochs), self.err, markersize=3)
+#            plt.show()
 
 
     def getNrNeurons(self): #calculates nr of neurons without input and outputlayer, cause is anyway in every NN the same

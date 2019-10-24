@@ -83,7 +83,7 @@ def crowding_distance_assignment(setI):
     setI[-1].crowdingDistance = 99999 #inf 
     # for all other points
     for j in range(1, length-1): 
-        setI[j].crowdingDistance += (setI[j+1].err - setI[j-1].err)
+        setI[j].crowdingDistance += (setI[j+1].err[-1] - setI[j-1].err[-1])
         
     setI.sort(key = takeNrNeurons) #sort list according to nrNeurons
     setI[0].crowdingDistance = 99999

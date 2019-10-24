@@ -69,8 +69,8 @@ plt.style.use("seaborn-whitegrid")
 
 
 #--------------------------------------------------------------------------------
-inputs = np.array(([0.01,0.99,0.99],[0.99,0.99,0.01],[0.99,0.01,0.01],[0.01,0.01,0.99]))
-targets = np.array(([0.99,0.01], [0.01,0.99], [0.01,0.99], [0.99,0.01]))
+inputs = np.array(([0.01,0.99],[0.99,0.01],[0.99,0.99],[0.01,0.01]))
+targets = np.array(([0.99], [0.99], [0.01], [0.01]))
 
 xTrain = inputs
 xTest = inputs
@@ -79,8 +79,8 @@ yTest = targets
 
 
 ## initialize ##
-EA = EvolutionaryAlgorithm(epochs = 1, xTrain = xTrain, yTrain = yTrain, 
-                           popSize = 10, xTest = xTest, yTest = yTest)
+EA = EvolutionaryAlgorithm(epochs = 5, xTrain = xTrain, yTrain = yTrain, 
+                           popSize = 5, xTest = xTest, yTest = yTest)
 
 
 colours = ['bo', 'gx', 'r*', 'cv', 'm1', 'y2', 'k3', 'w4']
@@ -93,7 +93,7 @@ population = initialPopulation
 
 
 ## search ##
-iterations = 20
+iterations = 3
 for i in range(iterations):
   
     # train population

@@ -11,13 +11,13 @@ from support.Loss_n_ActivationFunction import tanh, tanhDerivative, sigmoid, sig
 from support.Bootstrap import bootstrap
 
 
-inputLayer = Layer(3, 10)
+inputLayer = Layer(2, 10)
 activationFunction = ActivationLayer(tanh, tanhDerivative)
 hiddenLayer = Layer(10, 5)
 activationFunction2 = ActivationLayer(tanh, tanhDerivative)
 #hiddenLayer2 = Layer(300, 30)
 #activationFunction3 = ActivationLayer(sigmoid, sigmoidDerivative)
-outputLayer = Layer(5, 2)
+outputLayer = Layer(5, 1)
 activationFunction4 = ActivationLayer(tanh, tanhDerivative)
 
 
@@ -35,14 +35,14 @@ nn= NeuralNetwork(layerList, mse, mseDerivative)
 
 
 #
-inputs = np.array(([0.01,0.99,0.99],[0.99,0.99,0.01],[0.99,0.01,0.01],[0.01,0.01,0.99]))
+inputs = np.array(([0.01,0.99],[0.99,0.01],[0.99,0.99],[0.01,0.01]))
 #
 #
-targets = np.array(([0.99,0.01], [0.01,0.99], [0.01,0.99], [0.99,0.01]))
+targets = np.array(([0.99], [0.99], [0.01], [0.01]))
 
 
-nn.train(inputs, targets, epochs = 100, Rprop = True)
-#nn.predict(inputs, targets)
+nn.train(inputs, targets, epochs = 10, Rprop = False)
+nn.predict(inputs, targets)
 
 # load the data into a list
 #df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_train_100.csv", sep=',', header=None, index_col=False)

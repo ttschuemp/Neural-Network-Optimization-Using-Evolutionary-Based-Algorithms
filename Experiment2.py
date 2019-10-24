@@ -13,9 +13,9 @@ from support.Bootstrap import bootstrap
 
 inputLayer = Layer(784, 100)
 activationFunction = ActivationLayer(tanh, tanhDerivative)
-hiddenLayer = Layer(100, 80)
+hiddenLayer = Layer(100, 180)
 activationFunction2 = ActivationLayer(tanh, tanhDerivative)
-hiddenLayer2 = Layer(80, 80)
+hiddenLayer2 = Layer(180, 80)
 activationFunction3 = ActivationLayer(tanh, tanhDerivative)
 outputLayer = Layer(80, 10)
 activationFunction4 = ActivationLayer(tanh, tanhDerivative)
@@ -43,9 +43,9 @@ for i in range(len(dfTrain)):
     pass
 
 
-n2.learningRate = 0.3
+n2.learningRate = 0.25
 
-n2.train(inputs[0:100,:], targets[0:100,:], epochs = 20, Rprop = False)
+n2.train(inputs[0:1000,:], targets[0:1000,:], epochs = 20, Rprop = False)
 
 #df_test = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_test (1).csv", sep=',', header=None, index_col=False)
 #inputs_test = (np.asfarray(df_test.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
@@ -56,7 +56,7 @@ n2.train(inputs[0:100,:], targets[0:100,:], epochs = 20, Rprop = False)
 #    targets_test[i,j] = 0.99  # all_values[0] is the target label for this record
 #    pass
 
-#out = n2.predict(inputs_test[200:250,:], targets_test[200:250,:])
+n2.predict(inputs[1000:1100,:], targets[1000:1100,:])
 
 
 #

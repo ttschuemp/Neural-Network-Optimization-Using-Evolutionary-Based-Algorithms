@@ -46,7 +46,7 @@ class Population:
             totalOOS += n.accuracyOOS
             self.averageAccOOS = totalOOS/self.popSize
             # average Error over pop.
-            totalErr += n.err
+            totalErr += n.err[-1]
             self.averageErr = totalErr/self.popSize
             
 
