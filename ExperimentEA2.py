@@ -34,36 +34,35 @@ yTest = targets[1000:1100,:]
 
 
 ## initialize ##
-EA = EvolutionaryAlgorithm(epochs = 5, xTrain = xTrain, yTrain = yTrain, 
-                           popSize = 20, xTest = xTest, yTest = yTest)
+EA = EvolutionaryAlgorithm(epochs = 3, xTrain = xTrain, yTrain = yTrain, 
+                           popSize = 5, xTest = xTest, yTest = yTest)
 
 
 colours = ['bo', 'gx', 'r*', 'cv', 'm1', 'y2', 'k3', 'w4']
 
 # random initial population
-initialPopulation = EA.randomPop()
+initialPopulation = EA.randomPop(noHiddenLayers = True)
 nsga = NSGAII()
 
+#initialPopcopy = initialPopulation.copy_pop(initialPopulation)
 population = initialPopulation
 
 
 ## search ##
-iterations = 15
+iterations = 3
 for i in range(iterations):
   
     # train population
-    EA.trainPop(population)
- 
+    EA.trainPop(population, learningAlgorithm = "BP")
+#    popTrained_copy = population.copy_pop(population)
     # reproduction and mutation
     offSpring = EA.makeOffspring(population)
-  
+#    OSpop_copy =offSpring.copy_pop(offSpring)
     # train off spring
-    EA.trainPop(offSpring) # RuntimeWarning: overflow
-   
-    # predict on test data set
-    EA.predPop(offSpring)
-    EA.predPop(population)
- 
+    EA.trainPop(offSpring, learningAlgorithm = "BP") 
+    EA.trainPop(offSpring, learningAlgorithm = "BP")
+#    OSpopTrained = offSpring.copy_pop(offSpring)
+# 
     # evaluation & selection
 #    newPopParent = EA.updatePop(population, offSpring)
     newPopParent = nsga.run(population, offSpring)
@@ -71,6 +70,7 @@ for i in range(iterations):
     if newPopParent == "front to small": 
         continue
 #    
+#    newParentNSGA = newPopParent.copy_pop(newPopParent)
     population = newPopParent
 #    for n in population.neuralNetworks:
 #        plt.plot(n.err,n.nrNeurons, colours[i], markersize=10)
@@ -80,7 +80,8 @@ for i in range(iterations):
     print("generation: ",i+1 , population.evaluatePop())
 #plt.axis([0,1 , 0,2000])
 #plt.show()
-
+EA.predPop(population)
+population.evaluatePop()
 # fig1, axes = plt.subplots(1,2 figsize=(10,5))
 # axes[0].scatter(year, price)
 # plt.show()

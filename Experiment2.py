@@ -27,7 +27,8 @@ layerList = [inputLayer, activationFunction, hiddenLayer, activationFunction2, h
 
 n2= NeuralNetwork(layerList, mse, mseDerivative)
 
-
+nRprop= NeuralNetwork(layerList, mse, mseDerivative)
+n= NeuralNetwork(layerList, mse, mseDerivative)
 
 
 df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_train (1).csv", sep=',', header=None, index_col=False)
@@ -43,9 +44,13 @@ for i in range(len(dfTrain)):
     pass
 
 
-n2.learningRate = 0.25
-
-n2.train(inputs[0:1000,:], targets[0:1000,:], epochs = 20, Rprop = False)
+#n2.learningRate = 0.25
+#
+#n2.train(inputs[0:1000,:], targets[0:1000,:], epochs = 2, learningAlgorithm = "BP")
+#
+#nRprop.train(inputs[0:1000,:], targets[0:1000,:], epochs = 2, learningAlgorithm = "Rprop")
+n.learningRate = 0.45
+n.train(inputs[0:1000,:], targets[0:1000,:], epochs = 1, learningAlgorithm = "BP")
 
 #df_test = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_test (1).csv", sep=',', header=None, index_col=False)
 #inputs_test = (np.asfarray(df_test.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
@@ -56,7 +61,7 @@ n2.train(inputs[0:1000,:], targets[0:1000,:], epochs = 20, Rprop = False)
 #    targets_test[i,j] = 0.99  # all_values[0] is the target label for this record
 #    pass
 
-n2.predict(inputs[1000:1100,:], targets[1000:1100,:])
+#n2.predict(inputs[1000:1100,:], targets[1000:1100,:])
 
 
 #
@@ -91,3 +96,4 @@ n2.predict(inputs[1000:1100,:], targets[1000:1100,:])
 #
 #
 #
+

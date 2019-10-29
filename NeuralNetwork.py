@@ -15,10 +15,11 @@ plt.style.use("seaborn-whitegrid")
 
 class NeuralNetwork:
     #static variables 
-    maxNeurons = 300
-    maxHiddenLayers = 4
-    sizeInput = 2
-    sizeOutput = 1
+    maxNeurons = 500
+    minNeurons = 100
+    maxHiddenLayers = 7
+    sizeInput = 784
+    sizeOutput = 10
     
     def __init__(self, layerList, loss = mse, lossDerivative = mseDerivative, learningRate = 0.15):
         self.layers = layerList
@@ -34,6 +35,7 @@ class NeuralNetwork:
         self.ndominated = 0 # variable for NSGAII
         self.crowdingDistance = float('NAN') # variable for NSGAII
         self.dominantRank = float('NAN') # variable for NSGAII
+        self.prunedWeights = 0
 
     def add(self, layer): # add layer to NN
         self.layers.append(layer)
@@ -69,41 +71,42 @@ class NeuralNetwork:
 
 
     # train the network
-    def train(self, xTrain, yTrain, epochs, Rprop = False):
-            r, d = xTrain.shape # sample dimension first
-            # training loop
-            for i in range(epochs):
-                err = 0
-                scorecardIS = []
-                for j in range(r): # for all col.
-                    output = xTrain[j] # forward propagation, one sample 
-                    output = np.reshape(output,(1, d))
-                    for l in self.layers:
-                        output = l.forwardPropagation(output) # output for each row of the training data
+    def train(self, xTrain, yTrain, epochs, learningAlgorithm):
+        self.nrNeurons =  self.getNrNeurons()
+        r, d = xTrain.shape # sample dimension first
+        # training loop
+        for i in range(epochs):
+            err = 0
+            scorecardIS = []
+            for j in range(r): # for all col.
+                output = xTrain[j] # forward propagation, one sample 
+                output = np.reshape(output,(1, d))
+                for l in self.layers:
+                    output = l.forwardPropagation(output) # output for each row of the training data
 
-                    # compute loss (for display purpose only)
-                    err = err + self.loss(yTrain[j], output) # compare the output of each row with the target of this row/sample
+                # compute loss (for display purpose only)
+                err = err + self.loss(yTrain[j], output) # compare the output of each row with the target of this row/sample
 #                    print("error", self.err)
 #                    print("Y:", np.argmax(yTrain[j]),"YHat:", np.argmax(output))
-                    if (np.argmax(yTrain[j]) == np.argmax(output)): # append correct or incorrect to list
-                         # network's answer matches correct answer, add 1 to scorecard
-                         scorecardIS.append(1)
-                    else:
-                         # network's answer doesn't match correct answer, add 0 to scorecard
-                         scorecardIS.append(0)
-                         pass
-                    # backward propagation
-                    error = self.lossDerivative(yTrain[j], output) # wholesale example output is 1x3 and target is 1x3
+                if (np.argmax(yTrain[j]) == np.argmax(output)): # append correct or incorrect to list
+                     # network's answer matches correct answer, add 1 to scorecard
+                     scorecardIS.append(1)
+                else:
+                     # network's answer doesn't match correct answer, add 0 to scorecard
+                     scorecardIS.append(0)
+                     pass
+                # backward propagation
+                error = self.lossDerivative(yTrain[j], output) # wholesale example output is 1x3 and target is 1x3
 #                    print("error BP:", error)
-                    for l in reversed(self.layers):     # Error is in example e 1x3 matrix/vector
-                        error = l.backwardPropagation(error, self.learningRate, Rprop = Rprop)
-                # calculate average error on all samples
-                err /= r
-                self.err.append(err)
+                for l in reversed(self.layers):     # Error is in example e 1x3 matrix/vector
+                    error = l.backwardPropagation(error, self.learningRate, learningAlgorithm = learningAlgorithm)
+            # calculate average error on all samples
+            err /= r
+            self.err.append(err)
 #                print("av error: ", err)
-                
-                scorecard_arrayIS = np.asarray(scorecardIS)
-                self.accuracyIS = scorecard_arrayIS.sum() /scorecard_arrayIS.size
+            
+            scorecard_arrayIS = np.asarray(scorecardIS)
+            self.accuracyIS = scorecard_arrayIS.sum() /scorecard_arrayIS.size
 #            plt.plot(range(epochs), self.err, markersize=3)
 #            plt.show()
 

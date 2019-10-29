@@ -79,35 +79,35 @@ yTest = targets
 
 
 ## initialize ##
-EA = EvolutionaryAlgorithm(epochs = 5, xTrain = xTrain, yTrain = yTrain, 
-                           popSize = 5, xTest = xTest, yTest = yTest)
+EA = EvolutionaryAlgorithm(epochs = 1, xTrain = xTrain, yTrain = yTrain, 
+                           popSize = 10, xTest = xTest, yTest = yTest)
 
 
 colours = ['bo', 'gx', 'r*', 'cv', 'm1', 'y2', 'k3', 'w4']
 
 # random initial population
-initialPopulation = EA.randomPop()
+initialPopulation = EA.randomPop(noHiddenLayers = True)
 nsga = NSGAII()
 
 population = initialPopulation
 
 
 ## search ##
-iterations = 3
+iterations = 20
 for i in range(iterations):
   
     # train population
-    EA.trainPop(population)
+    EA.trainPop(population, learningAlgorithm = "BP")
  
     # reproduction and mutation
     offSpring = EA.makeOffspring(population)
   
     # train off spring
-    EA.trainPop(offSpring) # RuntimeWarning: overflow
+    EA.trainPop(offSpring, learningAlgorithm = "BP") # RuntimeWarning: overflow
    
     # predict on test data set
-    EA.predPop(offSpring)
-    EA.predPop(population)
+#    EA.predPop(offSpring)
+#    EA.predPop(population)
  
     # evaluation & selection
 #    newPopParent = EA.updatePop(population, offSpring)

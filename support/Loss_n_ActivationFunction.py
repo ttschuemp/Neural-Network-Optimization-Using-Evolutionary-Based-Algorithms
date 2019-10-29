@@ -11,7 +11,9 @@ def tanhDerivative(x):
     return 1-np.tanh(x)**2;
 
 def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+    # prevent overflow.
+    x = np.clip(x, -500, 500 )
+    return 1.0 / (1 + np.exp(-x))
 
 def sigmoidDerivative(x):
     S = sigmoid(x)
