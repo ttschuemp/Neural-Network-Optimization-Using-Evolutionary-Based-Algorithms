@@ -9,25 +9,26 @@ from support.Layer import Layer
 from support.ActivationLayer import ActivationLayer
 from support.Loss_n_ActivationFunction import tanh, tanhDerivative, sigmoid, sigmoidDerivative, mse, mseDerivative
 from support.Bootstrap import bootstrap
-import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.use('MacOSX')
+import matplotlib.pyplot as plt
 plt.style.use("seaborn-whitegrid")
 
 
-inputLayer = Layer(2, 5)
+
+
+
+inputLayer = Layer(784, 3)
 activationFunction = ActivationLayer(tanh, tanhDerivative)
-hiddenLayer = Layer(5, 5)
-activationFunction2 = ActivationLayer(tanh, tanhDerivative)
+#hiddenLayer = Layer(33, 33)
+#activationFunction2 = ActivationLayer(tanh, tanhDerivative)
 #hiddenLayer2 = Layer(300, 30)
 #activationFunction3 = ActivationLayer(sigmoid, sigmoidDerivative)
-outputLayer = Layer(5, 1)
-activationFunction4 = ActivationLayer(tanh, tanhDerivative)
+outputLayer = Layer(3, 10)
+activationFunction4 = ActivationLayer(sigmoid, sigmoidDerivative)
 
 
 
-layerList = [inputLayer, activationFunction, hiddenLayer, activationFunction2, 
-             outputLayer, activationFunction4]
+layerList = [inputLayer, activationFunction, outputLayer, activationFunction4]
 
 nn= NeuralNetwork(layerList, mse, mseDerivative)
 nnQp= NeuralNetwork(layerList, mse, mseDerivative)
@@ -36,22 +37,39 @@ nnRP= NeuralNetwork(layerList, mse, mseDerivative)
 #x_train = np.array([[0,0], [0,1], [1,0], [1,1]])
 #y_train = np.array([[0], [1], [1], [0]])
 
+##
+#inputs = np.array(([0.01,0.99],[0.99,0.01],[0.99,0.99],[0.01,0.01]))
+##
+##
+#targets = np.array(([0.99], [0.99], [0.01], [0.01]))
+
+df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_train (1).csv", sep=',', header=None, index_col=False)
+dfTrain, dfTest = bootstrap(df.iloc[0:1500,:])
+
+
+inputs = (np.asfarray(dfTrain.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
+targets = np.zeros((len(dfTrain),10)) + 0.01 # create target output values
+for i in range(len(dfTrain)):
+    j = dfTrain.iloc[i,0]
+    j=int(j)
+    targets[i,j] = 0.99  # all_values[0] is the target label for this record
+    pass
 
 
 
+xTrain = inputs[0:1000,:]
+xTest = inputs[1000:1100,:]
+yTrain = targets[0:1000,:]
+yTest = targets[1000:1100,:]
+
+
+
+nn.train(xTrain, yTrain, epochs = 100, learningAlgorithm = "BP")
+
+#nnQp.train(inputs, targets, epochs = 2, learningAlgorithm = "Quickpro")
 #
-inputs = np.array(([0.01,0.99],[0.99,0.01],[0.99,0.99],[0.01,0.01]))
-#
-#
-targets = np.array(([0.99], [0.99], [0.01], [0.01]))
-
-
-nn.train(inputs, targets, epochs = 2, learningAlgorithm = "BP")
-
-nnQp.train(inputs, targets, epochs = 2, learningAlgorithm = "Quickpro")
-
-nnRP.train(inputs, targets, epochs = 2, learningAlgorithm = "Rprop")
-#nn.predict(inputs, targets)
+#nnRP.train(inputs, targets, epochs = 2, learningAlgorithm = "Rprop")
+nn.predict(xTest, yTest)
 
 # load the data into a list
 #df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_train_100.csv", sep=',', header=None, index_col=False)

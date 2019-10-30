@@ -2,22 +2,23 @@
 
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib
+import matplotlib.pyplot as plt
+plt.style.use("seaborn-whitegrid")
+
 
 from support.Layer import Layer
 from support.Loss_n_ActivationFunction import tanh, tanhDerivative, sigmoid, sigmoidDerivative, mse, mseDerivative
 from support.ActivationLayer import ActivationLayer
 
-matplotlib.use('MacOSX')
-plt.style.use("seaborn-whitegrid")
+
 
 
 class NeuralNetwork:
     #static variables 
-    maxNeurons = 500
-    minNeurons = 100
-    maxHiddenLayers = 7
+    maxNeurons = 70
+    minNeurons = 20
+    maxHiddenLayers = 4
     sizeInput = 784
     sizeOutput = 10
     

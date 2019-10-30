@@ -1,7 +1,7 @@
 # ExperimentEA2.py
-
-import matplotlib.pyplot as plt
 import matplotlib
+import matplotlib.pyplot as plt
+plt.style.use("seaborn-whitegrid")
 import numpy as np
 import pandas as pd
 from EvolutionaryAlgorithm import EvolutionaryAlgorithm
@@ -9,8 +9,7 @@ from NSGAII import NSGAII
 from support.Bootstrap import bootstrap
 
 
-matplotlib.use('MacOSX')
-plt.style.use("seaborn-whitegrid")
+
 #--------------------------------------------------------------------------------
 
 df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_train (1).csv", sep=',', header=None, index_col=False)
@@ -34,8 +33,8 @@ yTest = targets[1000:1100,:]
 
 
 ## initialize ##
-EA = EvolutionaryAlgorithm(epochs = 3, xTrain = xTrain, yTrain = yTrain, 
-                           popSize = 5, xTest = xTest, yTest = yTest)
+EA = EvolutionaryAlgorithm(epochs = 6, xTrain = xTrain, yTrain = yTrain, 
+                           popSize = 10, xTest = xTest, yTest = yTest)
 
 
 colours = ['bo', 'gx', 'r*', 'cv', 'm1', 'y2', 'k3', 'w4']
@@ -49,7 +48,7 @@ population = initialPopulation
 
 
 ## search ##
-iterations = 3
+iterations = 10
 for i in range(iterations):
   
     # train population
