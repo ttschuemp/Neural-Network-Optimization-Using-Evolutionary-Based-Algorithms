@@ -9,7 +9,7 @@ class Population:
     def __init__(self, neuralNetworks): 
         self.popSize = len(neuralNetworks)
         self.neuralNetworks = neuralNetworks
-        self.averageAccIS = float('NAN')
+        self.averageAccTrain = float('NAN')
         self.averageAccOOS = float('NAN')
         self.elitestNN = []
         self.averageErr = float('NAN')
@@ -27,10 +27,10 @@ class Population:
         
     def evaluatePop(self): 
         # in sample
-        totalIS = 0.0
+        totalTrain = 0.0
         for n in self.neuralNetworks:
-            totalIS += n.accuracyIS
-            self.averageAccIS = totalIS/self.popSize
+            totalTrain += n.accuracyTrain
+            self.averageAccIS = totalTrain/self.popSize
             pass
         self.evaluateNrNeurons()
         
@@ -40,7 +40,7 @@ class Population:
         for n in self.neuralNetworks: 
             if n.dominantRank == 1:
                 self.elitestNN.append(n)
-                print("Best NN: ","IS: ", n.accuracyIS, "OS: ", n.accuracyOOS, "nrNeurons: ", n.nrNeurons)
+                print("Best NN: ","IS: ", n.accuracyTrain, "OS: ", n.accuracyOOS, "nrNeurons: ", n.nrNeurons)
                 pass
             # average Accuracy over pop out of sample
             totalOOS += n.accuracyOOS
@@ -50,7 +50,7 @@ class Population:
             self.averageErr = totalErr/self.popSize
             
 
-        return self.averageAccIS, self.averageAccOOS, self.averageErr, self.averageNeurons;
+        return self.averageAccTrain, self.averageAccOOS, self.averageErr, self.averageNeurons;
     
     def evaluateNrNeurons(self): 
         totalNeurons = 0

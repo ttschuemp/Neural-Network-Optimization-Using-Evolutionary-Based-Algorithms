@@ -7,7 +7,7 @@ from Population import Population
 from support.Parameters import initializeParameters
 from support.MutationAction import mutationAction
 from NeuralNetwork import NeuralNetwork
-from support.evaluation_selection import singleobjective
+from support.Evaluation_Selection import singleobjective
 
 # Initialization
 
@@ -37,9 +37,9 @@ class EvolutionaryAlgorithm:
         return popNN
 
     # Train Population
-    def trainPop(self, population, learningAlgorithm): # popList gets a list of NN
+    def trainPop(self, population): # popList gets a list of NN
         for n in population.neuralNetworks: # iterate over nn list 
-             n.train(self.xTrain, self.yTrain, self.epochs, learningAlgorithm = learningAlgorithm)
+             n.train(self.xTrain, self.yTrain, self.epochs)
              pass
 
 

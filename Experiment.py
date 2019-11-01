@@ -7,7 +7,8 @@ import numpy as np
 from NeuralNetwork import NeuralNetwork
 from support.Layer import Layer
 from support.ActivationLayer import ActivationLayer
-from support.Loss_n_ActivationFunction import tanh, tanhDerivative, sigmoid, sigmoidDerivative, mse, mseDerivative
+from support.Functions import tanh, tanhDerivative, sigmoid, sigmoidDerivative, mse, \
+mseDerivative, relu, reluDerivative, softmax, softmaxDerivative, crossEntropy, crossEntropyDerivative
 from support.Bootstrap import bootstrap
 import matplotlib
 import matplotlib.pyplot as plt
@@ -15,36 +16,24 @@ plt.style.use("seaborn-whitegrid")
 
 
 
-
-
-inputLayer = Layer(784, 3)
+inputLayer = Layer(784, 30)
 activationFunction = ActivationLayer(tanh, tanhDerivative)
 #hiddenLayer = Layer(33, 33)
 #activationFunction2 = ActivationLayer(tanh, tanhDerivative)
-#hiddenLayer2 = Layer(300, 30)
-#activationFunction3 = ActivationLayer(sigmoid, sigmoidDerivative)
-outputLayer = Layer(3, 10)
-activationFunction4 = ActivationLayer(sigmoid, sigmoidDerivative)
+hiddenLayer2 = Layer(30, 30)
+activationFunction3 = ActivationLayer(tanh, tanhDerivative)
+outputLayer = Layer(30, 10)
+activationFunction4 = ActivationLayer(softmax, softmaxDerivative)
 
 
 
-layerList = [inputLayer, activationFunction, outputLayer, activationFunction4]
+layerList = [inputLayer, activationFunction,hiddenLayer2,activationFunction3, outputLayer, activationFunction4]
 
-nn= NeuralNetwork(layerList, mse, mseDerivative)
-nnQp= NeuralNetwork(layerList, mse, mseDerivative)
-nnRP= NeuralNetwork(layerList, mse, mseDerivative)
-## training data
-#x_train = np.array([[0,0], [0,1], [1,0], [1,1]])
-#y_train = np.array([[0], [1], [1], [0]])
+nn= NeuralNetwork(layerList, crossEntropy, crossEntropyDerivative)
 
-##
-#inputs = np.array(([0.01,0.99],[0.99,0.01],[0.99,0.99],[0.01,0.01]))
-##
-##
-#targets = np.array(([0.99], [0.99], [0.01], [0.01]))
-
+#
 df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_train (1).csv", sep=',', header=None, index_col=False)
-dfTrain, dfTest = bootstrap(df.iloc[0:1500,:])
+dfTrain, dfvalidation, dfTest = bootstrap(df.iloc[0:1500,:])
 
 
 inputs = (np.asfarray(dfTrain.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
@@ -61,15 +50,32 @@ xTrain = inputs[0:1000,:]
 xTest = inputs[1000:1100,:]
 yTrain = targets[0:1000,:]
 yTest = targets[1000:1100,:]
+xValidation = inputs[1100:1200,:]
+yValidation = targets[1100:1200,:]
 
 
 
-nn.train(xTrain, yTrain, epochs = 100, learningAlgorithm = "BP")
+nn.train(xTrain, yTrain, epochs = 2)
+
+
+nn.predict(xTest, yTest)
+
 
 #nnQp.train(inputs, targets, epochs = 2, learningAlgorithm = "Quickpro")
 #
 #nnRP.train(inputs, targets, epochs = 2, learningAlgorithm = "Rprop")
-nn.predict(xTest, yTest)
+#yhat_train=nn.predict(xTrain, yTrain)
+#yhat_train=np.argmax(yhat_train, axis =1)
+#y = np.argmax(yTrain, axis =1)
+#
+#accuracyIS = classification(y, yhat_train)
+#
+#yhat_test=nn.predict(xTest, yTest)
+#yhat_test=np.argmax(yhat_test, axis =1)
+#y_test = np.argmax(yTest, axis =1)
+#
+#accuracyOOS = classification(y_test, yhat_test)
+
 
 # load the data into a list
 #df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_train_100.csv", sep=',', header=None, index_col=False)

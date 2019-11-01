@@ -34,7 +34,7 @@ yTest = targets[1000:1100,:]
 
 ## initialize ##
 EA = EvolutionaryAlgorithm(epochs = 6, xTrain = xTrain, yTrain = yTrain, 
-                           popSize = 10, xTest = xTest, yTest = yTest)
+                           popSize = 5, xTest = xTest, yTest = yTest)
 
 
 colours = ['bo', 'gx', 'r*', 'cv', 'm1', 'y2', 'k3', 'w4']
@@ -48,18 +48,18 @@ population = initialPopulation
 
 
 ## search ##
-iterations = 10
+iterations = 5
 for i in range(iterations):
   
     # train population
-    EA.trainPop(population, learningAlgorithm = "BP")
+    EA.trainPop(population)
 #    popTrained_copy = population.copy_pop(population)
     # reproduction and mutation
     offSpring = EA.makeOffspring(population)
 #    OSpop_copy =offSpring.copy_pop(offSpring)
     # train off spring
-    EA.trainPop(offSpring, learningAlgorithm = "BP") 
-    EA.trainPop(offSpring, learningAlgorithm = "BP")
+    EA.trainPop(offSpring) 
+    EA.trainPop(offSpring)
 #    OSpopTrained = offSpring.copy_pop(offSpring)
 # 
     # evaluation & selection
