@@ -10,6 +10,16 @@ class Layer(Layers):
         self.weights = np.random.randn(inputSize, outputSize) * 0.1 # * 0.01 keep initial weights small
         self.bias = np.random.randn(1, outputSize) * 0.1
         self.neurons = inputSize
+        # Adam
+        self.alpha = 0.0001 # stepsize # needs to be tuned!! # default 0.001
+        self.beta1 = 0.9 # Exponential decay rates for the moment estimates
+        self.beta2 = 0.999
+        self.epsilon =1e-8
+        self.m = 0 # first moment vector
+        self.v = 0 # second moment vector
+        self.mb = 0 # first moment vector (bais)
+        self.vb = 0 # second moment vector (bais)
+        self.t = 0 # time step
 #        # momentum
 #        self.mu = 0.9 # momentum constant, anneal up not down!
 #        self.velocity_old = np.zeros((inputSize, outputSize)) # store moving average of the gradients
@@ -27,14 +37,7 @@ class Layer(Layers):
 ##        # QuickPro
 ##        self.weightsE_old = np.ones((inputSize, outputSize))-0.5
 ##        self.dw_old = np.random.uniform(-0.1, 0.1, size=(1, outputSize))
-        # Adam
-        self.alpha = 0.001 # stepsize 
-        self.beta1 = 0.9 # Exponential decay rates for the moment estimates
-        self.beta2 = 0.999
-        self.epsilon =1e-8
-        self.m = 0 # first moment vector
-        self.v = 0 # second moment vector
-        self.t = 0 # time step
+
         
         
         
@@ -42,7 +45,7 @@ class Layer(Layers):
     def changeSize(self, layer, inputSize, outputSize):
         layer.weights = np.random.randn(inputSize, outputSize) * 0.1
         layer.bias = np.random.randn(1, outputSize) * 0.1
-        return layer
+
     
     def jitterWeights(self): # gaussian noise to each weight with prob 0.3, x dist-> N(0, 0.01)
         numrows, numcols = self.weights.shape
@@ -88,12 +91,24 @@ class Layer(Layers):
         weightsError = np.dot(self.input.T, outputError)
         
         self.t = self.t+1
+        # weights
         self.m = self.beta1 * self.m + (1 - self.beta1) * weightsError
         self.v = self.beta2 * self.v + (1 - self.beta2) * (weightsError**2)
+        # bias
+        self.mb = self.beta1 * self.mb + (1 - self.beta1) * outputError
+        self.vb = self.beta2 * self.vb + (1 - self.beta2) * (outputError**2)
+        # Bias-Correcton
+        # weights
         mHat = self.m/(1 - self.beta1**self.t)
         vHat = self.v/(1 - self.beta2**self.t)
+        # bias
+        mHatb = self.mb/(1 - self.beta1**self.t)
+        vHatb = self.vb/(1 - self.beta2**self.t)
+        # update
+        self.weights = self.weights - self.alpha * ((mHat)/(np.sqrt(vHat) - self.epsilon))
+        self.bias = self.bias - self.alpha * ((mHatb)/(np.sqrt(vHatb) - self.epsilon))
         
-        self.weights = self.weights - self.alpha * (mHat/(np.sqrt(vHat) - self.epsilon))
+        
         return inputError
     
     

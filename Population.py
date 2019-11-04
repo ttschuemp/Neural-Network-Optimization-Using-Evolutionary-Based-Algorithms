@@ -58,6 +58,36 @@ class Population:
             totalNeurons += n.getNrNeurons()
             self.averageNeurons = totalNeurons/self.popSize
             
+    def printPop(self): 
+        totalOOS = 0.0
+        totalErr = 0.0
+        totalTrain = 0.0
+        for n in self.neuralNetworks:
+            totalOOS += n.accuracyOOS
+            self.averageAccOOS = totalOOS/self.popSize
+            # average Error over pop.
+            totalErr += n.err[-1]
+            self.averageErr = totalErr/self.popSize
+            totalTrain += n.accuracyTrain
+            self.averageAccTrain = totalTrain/self.popSize
             
+        print('############# Print Population #################')
+        print('Population Size: ', self.popSize)
+        print('Av. Error: ', self.averageErr[-1], 'Av. Neurons: ',self.averageNeurons,)
+        print('Av. Acc. Train: ',self.averageAccTrain, 'Av. Acc. Vali: ', self.averageAccOOS)
+        print('------------------------------------------------')
+        i = 0
+        for n in self.neuralNetworks:
+            print('NN nr:', i)
+            print('Acc. Training: ', n.accuracyTrain, 'Acc. Vali: ', n.accuracyOOS)
+            print('Mutations: ', n.mutations)
+            print('Nr. Neurons: ', n.nrNeurons, 'Pruned Neurons: ', n.prunedWeights)
+            print('Hidden Layers: ', (len(n.layers)- 4) /2)
+            print('------------------------------------------------')
+            i +=1
+        print('####################################################')
+            
+                
+                
 
         

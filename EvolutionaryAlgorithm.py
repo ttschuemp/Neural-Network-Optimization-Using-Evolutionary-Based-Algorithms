@@ -14,8 +14,7 @@ from support.Evaluation_Selection import singleobjective
 
 class EvolutionaryAlgorithm:
     
-    def __init__(self, epochs, xTrain, yTrain, popSize, xTest, yTest):
-        self.epochs = epochs
+    def __init__(self, xTrain, yTrain, popSize, xTest, yTest):
         self.popSize = popSize
         self.xTrain = xTrain
         self.yTrain = yTrain
@@ -27,20 +26,17 @@ class EvolutionaryAlgorithm:
         NNlist = []
         for i in range(self.popSize):
             randomLayers = initializeParameters(noHiddenLayers=noHiddenLayers)
-            sigma = 0.1
-            mu = 0.5
-            lr = abs(sigma * np.random.randn() + mu) # learning rate random from a normal distribution
-            nn = NeuralNetwork(randomLayers, learningRate = lr)
+            nn = NeuralNetwork(randomLayers)
             NNlist.append(nn)
             pass
         popNN = Population(NNlist)
         return popNN
 
     # Train Population
-    def trainPop(self, population): # popList gets a list of NN
+    def trainPop(self, population, epochs): # popList gets a list of NN
         for n in population.neuralNetworks: # iterate over nn list 
-             n.train(self.xTrain, self.yTrain, self.epochs)
-             pass
+             n.train(self.xTrain, self.yTrain, epochs)
+             
 
 
 
@@ -51,13 +47,12 @@ class EvolutionaryAlgorithm:
         
         # mutation
         for n in populationCopy.neuralNetworks:
-            mutationAction(1, n) # every child gets new layer
+#            mutationAction(1, n) # every child gets new layer
             x = np.random.poisson(1) 
-            if(x==0):
-                continue
-            for i in range(x): # # mutation operations get executed with x+1; x = Poi(1)
-                ranInt = np.random.randint(3)+2 # get random integers from 2-4
+            for i in range(x+1): # # mutation operations get executed with x+1; x = Poi(1)
+                ranInt = np.random.randint(4)+1 # get random integers from 2-4
                 mutationAction(ranInt, n) # manipulates a neural network 
+                n.mutations.append(ranInt) # history of mutation Actions
                 
         offSpringPopulation = populationCopy
         
@@ -66,8 +61,8 @@ class EvolutionaryAlgorithm:
     
     def predPop(self, population): 
         for n in population.neuralNetworks:
-            n.predict(self.xTest, self.yTest)
-        pass
+            nx=n.predict(self.xTest, self.yTest)
+            del nx
     
 
 

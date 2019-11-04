@@ -14,51 +14,65 @@ import matplotlib
 import matplotlib.pyplot as plt
 plt.style.use("seaborn-whitegrid")
 
+# Data 
+dataPath = '/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_train (1).csv'
+
+df = pd.read_csv(dataPath, sep=',', header=None, index_col=False)
+df = df.iloc[0:2500,:]
 
 
-inputLayer = Layer(784, 30)
-activationFunction = ActivationLayer(tanh, tanhDerivative)
-#hiddenLayer = Layer(33, 33)
-#activationFunction2 = ActivationLayer(tanh, tanhDerivative)
-hiddenLayer2 = Layer(30, 30)
-activationFunction3 = ActivationLayer(tanh, tanhDerivative)
-outputLayer = Layer(30, 10)
-activationFunction4 = ActivationLayer(softmax, softmaxDerivative)
-
-
-
-layerList = [inputLayer, activationFunction,hiddenLayer2,activationFunction3, outputLayer, activationFunction4]
-
-nn= NeuralNetwork(layerList, crossEntropy, crossEntropyDerivative)
-
-#
-df = pd.read_csv("/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_train (1).csv", sep=',', header=None, index_col=False)
-dfTrain, dfvalidation, dfTest = bootstrap(df.iloc[0:1500,:])
-
-
-inputs = (np.asfarray(dfTrain.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
-targets = np.zeros((len(dfTrain),10)) + 0.01 # create target output values
-for i in range(len(dfTrain)):
-    j = dfTrain.iloc[i,0]
+inputs = (np.asfarray(df.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
+targets = np.zeros((len(df),10)) + 0.01 # create target output values
+for i in range(len(df)):
+    j = df.iloc[i,0]
     j=int(j)
     targets[i,j] = 0.99  # all_values[0] is the target label for this record
     pass
 
 
 
-xTrain = inputs[0:1000,:]
-xTest = inputs[1000:1100,:]
-yTrain = targets[0:1000,:]
-yTest = targets[1000:1100,:]
-xValidation = inputs[1100:1200,:]
-yValidation = targets[1100:1200,:]
+dfnew=np.concatenate((inputs,targets), axis=1)
+pdDfNew = pd.DataFrame(dfnew)
+dfTrain, dfvalidation, dfTest = bootstrap(pdDfNew)
+del inputs, targets, i, j, pdDfNew, dfnew
+
+
+dfTrain_np= np.asarray(dfTrain)
+dfvalidation_np = np.asarray(dfvalidation) 
+dfTest_np = np.asarray(dfTest) 
+
+X = dfTrain_np[:,0:784]
+Y = dfTrain_np[:,784:]
+
+X_vali = dfvalidation_np[:,0:784]
+Y_vali = dfvalidation_np[:,784:]
+
+##
+
+# initialize NN
+
+inputLayer = Layer(784, 100)
+activationFunction = ActivationLayer(tanh, tanhDerivative)
+hiddenLayer = Layer(100, 20)
+activationFunction2 = ActivationLayer(tanh, tanhDerivative)
+hiddenLayer2 = Layer(20, 10)
+activationFunction3 = ActivationLayer(tanh, tanhDerivative)
+outputLayer = Layer(10, 10)
+activationFunction4 = ActivationLayer(softmax, softmaxDerivative)
 
 
 
-nn.train(xTrain, yTrain, epochs = 2)
+layerList = [inputLayer, activationFunction, hiddenLayer, activationFunction2, hiddenLayer2, activationFunction3, outputLayer, activationFunction4]
+
+nn= NeuralNetwork(layerList, crossEntropy, crossEntropyDerivative)
 
 
-nn.predict(xTest, yTest)
+nn.train(X, Y, epochs = 9)
+
+
+pred_vali = nn.predict(X_vali, Y_vali)
+pred_vali_max = np.argmax(pred_vali, axis = 1)
+
 
 
 #nnQp.train(inputs, targets, epochs = 2, learningAlgorithm = "Quickpro")

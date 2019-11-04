@@ -9,46 +9,76 @@ from NeuralNetwork import NeuralNetwork
 # switch like statement
 
 
-def addLayer(neuralNetwork): # adds layer with XY neurons to last layer
+def addLayer(neuralNetwork): # adds layer with XY neurons to last layer (inputlayer)
+    
+    # network already > max Hidden layers ?
     if len(neuralNetwork.layers) >= (4 + NeuralNetwork.maxHiddenLayers*2): # cause 4 is a network with no hidden layer
         pass
     else:
         # new layer
-        inputSize = np.random.randint(NeuralNetwork.minNeurons+1, NeuralNetwork.maxNeurons+1) # random number for neurons of layer
-        layerNew = Layer(inputSize, NeuralNetwork.sizeOutput) # outputsize form static variable
-        # new activation layer 
-        activationLayer = randomActivationLayer()
+        outputSize = np.random.randint(NeuralNetwork.minNeurons+1, NeuralNetwork.maxNeurons+1) # random number for neurons of layer
+        layerNew = Layer(NeuralNetwork.sizeInput, outputSize) # outputsize form static variable
+        activationLayer = randomActivationLayer() # gives random activation layer
         # adjust neighbor layer
-        # inputSize of the new Layer is outputSize of old
-        size = len(neuralNetwork.layers[-2].weights) # row length of weights
-        neuralNetwork.layers[-2].changeSize(neuralNetwork.layers[-2], size, inputSize)
-        neuralNetwork.add(layerNew)
-        neuralNetwork.add(activationLayer)
+#        # inputSize of the new Layer is outputSize of old
+        x,y = neuralNetwork.layers[0].weights.shape  # row length of weights
+
+        neuralNetwork.layers[0].changeSize(neuralNetwork.layers[0], outputSize, y)
+        # set values of Adam to 0 in changed layers
+        neuralNetwork.layers[0].m = 0
+        neuralNetwork.layers[0].mb = 0
+        neuralNetwork.layers[0].v = 0
+        neuralNetwork.layers[0].vb = 0
+        neuralNetwork.layers[0].t = 0
+        
+        neuralNetwork.add(0,layerNew)
+        # set values of Adam to 0 in changed layers
+        neuralNetwork.layers[0].m = 0
+        neuralNetwork.layers[0].mb = 0
+        neuralNetwork.layers[0].v = 0
+        neuralNetwork.layers[0].vb = 0
+        neuralNetwork.layers[0].t = 0
+        neuralNetwork.add(1, activationLayer)
+        
+        
 
 
 def rmvLayer(neuralNetwork): # removes random a hidden layer, hidden layers closer to input layer have higher prob to be rmved
-    if len(neuralNetwork.layers) <= 4:
+    # Network to small ? one hidden layer is the minimal structure
+    leng = len(neuralNetwork.layers)
+    if leng <= 6:
         pass
-    else:
-        pass  # not just the last layer remove, remove a random layer
-#        hiddenLayers = (len(neuralNetwork.layers)-4)/2 # cause there are always 4 layers min of each network(inputL, outputL, 2xactivationL)
-#        x = np.array((range(1,hiddenLayers)))
-#        p = x/sum(x)
-#        prob = np.cumsum(p)
-#        u = np.random.rand()
-#        i = len(np.where(u>prob)[0]) # hiddenlayer i will be deleted
-#        i= i*2 #to get index of the layer
-#        i=len(neuralNetwork.layers)-i
+    else: 
+        # not just the last layer remove, remove a random layer
+        hiddenLayers = int((len(neuralNetwork.layers)-4)/2) # cause there are always 4 layers min of each network(inputL, outputL, 2xactivationL)
+        # decide which hidden layer gets deleted
+        x = np.array((range(hiddenLayers, 0, -1)))
+        p = x/sum(x)
+        cprob = np.cumsum(p)
+        u = np.random.rand()
+        i = len(np.where(u>cprob)[0]) # if 0 -> first hidden layer deleted (closer to input)
+        i = i*2 + 2 #to get index of the layer
+        o,z = neuralNetwork.layers[i].weights.shape
+        neuralNetwork.rmv(neuralNetwork.layers[i]) # rmv layer
+        neuralNetwork.rmv(neuralNetwork.layers[i-1]) # rmv activation layer
+        # adjust size of other layers
+        neuralNetwork.layers[i-2].changeSize(neuralNetwork.layers[i-2], neuralNetwork.layers[i-2].weights.shape[0] , z)
+        # set values of Adam to 0 in changed layer
+        neuralNetwork.layers[i-2].m = 0
+        neuralNetwork.layers[i-2].mb = 0
+        neuralNetwork.layers[i-2].v = 0
+        neuralNetwork.layers[i-2].vb = 0
+        neuralNetwork.layers[i-2].t = 0
 #        ----------------------------------
-        size = len(neuralNetwork.layers[-4].weights) # col length, -4 cause this will be the last non-activation layer
-        neuralNetwork.rmv(neuralNetwork.layers[-2]) # rmv second last layer
-        neuralNetwork.rmv(neuralNetwork.layers[-1])  # rmv last layer
-        neuralNetwork.layers[-2].changeSize(neuralNetwork.layers[-2], size, NeuralNetwork.sizeOutput)
+#        size = len(neuralNetwork.layers[-4].weights) # col length, -4 cause this will be the last non-activation layer
+#        neuralNetwork.rmv(neuralNetwork.layers[-2]) # rmv second last layer
+#        neuralNetwork.rmv(neuralNetwork.layers[-1])  # rmv last layer
+#        neuralNetwork.layers[-2].changeSize(neuralNetwork.layers[-2], size, NeuralNetwork.sizeOutput)
 
 
-# has no effect if larningAlgrithm is Rprop
-def changeLr(neuralNetwork): # new and random learning rate
-    neuralNetwork.learningRate = np.random.rand()
+## has no effect if larningAlgrithm is Rprop
+#def changeLr(neuralNetwork): # new and random learning rate
+#    neuralNetwork.learningRate = np.random.rand()
 
 
 def jitterNN(neuralNetwork):
@@ -84,12 +114,11 @@ def pruning(neuralNetwork): # delete the smalest 1 %  exept for output layer
 def mutationAction(action, direc): # switch like function
     switcher = {
         1: addLayer,
-        2: pruning,
-        3: changeLr,
-        4: jitterNN,
-        5: rmvLayer,
-
-    }
+        2: rmvLayer,
+        3: jitterNN,
+        4: pruning,
+        }
+    
     # Get the function from switcher dictionary
     func = switcher.get(action, lambda: "Invalid")
     # Execute the function

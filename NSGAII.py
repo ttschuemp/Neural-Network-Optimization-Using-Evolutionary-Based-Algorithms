@@ -2,7 +2,7 @@
 
 import numpy as np
 from Population import Population
-from support.evaluation_selection import fast_nondominated_sort, crowding_distance_assignment
+from support.Evaluation_Selection import fast_nondominated_sort, crowding_distance_assignment
 
 
 class NSGAII: 
@@ -12,8 +12,8 @@ class NSGAII:
         combPop = Population(parent.neuralNetworks + offspring.neuralNetworks) # combine the two populations
         
         front = fast_nondominated_sort(combPop)
-        if len(front) == 0:
-            return "front to small"
+#        if len(front) == 0:
+#            return "front to small"
         # add first front until > popSize
         newParentList = []
         counter = 1

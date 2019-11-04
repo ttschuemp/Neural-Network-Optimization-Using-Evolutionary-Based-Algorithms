@@ -12,16 +12,17 @@ mseDerivative, relu, reluDerivative, softmax, softmaxDerivative, crossEntropy, c
 
 class NeuralNetwork:
     #static variables 
-    maxNeurons = 70
-    minNeurons = 15
-    maxHiddenLayers = 4
+    maxNeurons = 200
+    minNeurons = 30
+    maxHiddenLayers = 5
     sizeInput = 784
     sizeOutput = 10
     
-    def __init__(self, layerList, loss = mse, lossDerivative = mseDerivative):
+    def __init__(self, layerList, loss = crossEntropy, lossDerivative = crossEntropyDerivative):
         self.layers = layerList
         self.loss = loss
         self.lossDerivative = lossDerivative
+        self.mutations = []
 #        self.learningRate = learningRate
 #        self.decreaseLR = decreaseLR
         self.accuracyTrain = float('NAN')
@@ -36,8 +37,8 @@ class NeuralNetwork:
         self.crowdingDistance = float('NAN') 
         self.dominantRank = float('NAN') 
 
-    def add(self, layer): # add layer to NN
-        self.layers.append(layer)
+    def add(self,index, layer): # add layer to NN
+        self.layers.insert(index,layer)
 
 
     def rmv(self, layer):
