@@ -11,6 +11,7 @@ from support.Functions import tanh, tanhDerivative, sigmoid, sigmoidDerivative, 
 mseDerivative, relu, reluDerivative, softmax, softmaxDerivative, crossEntropy, crossEntropyDerivative
 from support.Bootstrap import bootstrap
 import matplotlib
+matplotlib.use('MacOSX')
 import matplotlib.pyplot as plt
 plt.style.use("seaborn-whitegrid")
 
@@ -67,7 +68,7 @@ layerList = [inputLayer, activationFunction, hiddenLayer, activationFunction2, h
 nn= NeuralNetwork(layerList, crossEntropy, crossEntropyDerivative)
 
 
-nn.train(X, Y, epochs = 9)
+nn.train(X, Y, epochs = 1)
 
 
 pred_vali = nn.predict(X_vali, Y_vali)

@@ -52,7 +52,7 @@ class EvolutionaryAlgorithm:
             for i in range(x+1): # # mutation operations get executed with x+1; x = Poi(1)
                 ranInt = np.random.randint(4)+1 # get random integers from 2-4
                 mutationAction(ranInt, n) # manipulates a neural network 
-                n.mutations.append(ranInt) # history of mutation Actions
+
                 
         offSpringPopulation = populationCopy
         

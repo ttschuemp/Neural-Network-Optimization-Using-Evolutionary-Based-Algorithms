@@ -6,7 +6,7 @@ from support.AbstractLayer import Layers
 class Layer(Layers):
 
     def __init__(self, inputSize, outputSize):
-        np.random.seed(2)
+#        np.random.seed(2)
         self.weights = np.random.randn(inputSize, outputSize) * 0.1 # * 0.01 keep initial weights small
         self.bias = np.random.randn(1, outputSize) * 0.1
         self.neurons = inputSize
@@ -50,7 +50,7 @@ class Layer(Layers):
     def jitterWeights(self): # gaussian noise to each weight with prob 0.3, x dist-> N(0, 0.01)
         numrows, numcols = self.weights.shape
         prob = 0.3
-        sigma = 0.01
+        sigma = 0.05
         mu = 0
         index = np.random.rand(numrows, numcols) < prob # idex of jitter weights 
         noise = np.random.normal(mu, sigma, size = (numrows, numcols))

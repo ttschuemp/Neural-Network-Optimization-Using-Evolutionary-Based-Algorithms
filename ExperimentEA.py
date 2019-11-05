@@ -1,11 +1,14 @@
 # ExperimentEA.py
-import matplotlib.pyplot as plt
+
 import matplotlib
-import numpy as np
+matplotlib.use('MacOSX')
+import matplotlib.pyplot as plt
+plt.style.use("seaborn-whitegrid")
 import pandas as pd
 from EvolutionaryAlgorithm import EvolutionaryAlgorithm
 from NSGAII import NSGAII
 from support.Bootstrap import bootstrap
+import numpy as np 
 
 
 #matplotlib.use('MacOSX')
@@ -118,7 +121,7 @@ Y_vali = dfvalidation_np[:,784:]
 
 ## initialize ##
 EA = EvolutionaryAlgorithm(xTrain = X, yTrain = Y, 
-                           popSize = 10, xTest = X_vali, yTest = Y_vali)
+                           popSize = 20, xTest = X_vali, yTest = Y_vali)
 
 
 colours = ['bo', 'gx', 'r*', 'cv', 'm1', 'y2', 'k3', 'w4']
@@ -131,17 +134,19 @@ population = initialPopulation
 
 
 ## search ##
-it = 1
+it = 6
 for i in range(it):
   
     # train population
-    EA.trainPop(population, epochs = 3) # train until acc. training set min 90 %
+#    EA.trainPop(population, epochs = 6) # train until acc. training set min 90 %
  
     # reproduction and mutation
     offSpring = EA.makeOffspring(population)
   
     # train off spring
-    EA.trainPop(offSpring, epochs = 3) 
+    EA.trainPop(population, epochs = 2)
+    EA.trainPop(offSpring, epochs = 2) 
+    
    
     # predict on validation data set (dont train the weights on this dataset only for hyperparameter adjustment)
     EA.predPop(offSpring)
@@ -150,24 +155,24 @@ for i in range(it):
     # evaluation & selection
 #    newPopParent = EA.updatePop(population, offSpring)
     newPopParent = nsga.run(population, offSpring)
-#    
-    if newPopParent == "front to small": 
-        continue
+    newPopParent.printPop()
 #    
     population = newPopParent
-#    for n in population.neuralNetworks:
-#        plt.plot(n.err,n.nrNeurons, colours[i], markersize=10)
+    for n in population.neuralNetworks:
+        plt.plot(n.accuracyOOS,n.nrNeurons, colours[i], markersize=10)
+    
 
-
-## report ##
-    print("generation: ",i+1 , population.evaluatePop())
+### report ##
+#    print("generation: ",i+1 , population.evaluatePop())
 #plt.axis([0,1 , 0,2000])
-#plt.show()
 
+plt.show()
 # fig1, axes = plt.subplots(1,2 figsize=(10,5))
 # axes[0].scatter(year, price)
 # plt.show()
     
 
-for n in offSpring.neuralNetworks:
-    print(n.accuracyTrain)
+#for n in offSpring.neuralNetworks:
+#    print(n.accuracyTrain)
+
+# TEST 

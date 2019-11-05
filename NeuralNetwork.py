@@ -12,9 +12,9 @@ mseDerivative, relu, reluDerivative, softmax, softmaxDerivative, crossEntropy, c
 
 class NeuralNetwork:
     #static variables 
-    maxNeurons = 200
-    minNeurons = 30
-    maxHiddenLayers = 5
+    maxNeurons = 300
+    minNeurons = 50
+    maxHiddenLayers = 6
     sizeInput = 784
     sizeOutput = 10
     
@@ -30,7 +30,7 @@ class NeuralNetwork:
 #        self.result = []
         self.err = []
         self.prunedWeights = 0
-        self.nrNeurons =  self.getNrNeurons() - self.prunedWeights
+        self.nrNeurons =  0
          # variables for NSGAII
         self.solution = []
         self.ndominated = 0 
@@ -48,12 +48,11 @@ class NeuralNetwork:
         #         calculate nr. of neurons
         n = 2
         i = 0
-        self.nrNeurons = 0
         for l in self.layers: # loop over every second element in list
             if i % n == 0 and i > 0: # i> 1 to skip the first layer
                 self.nrNeurons += l.neurons
             i += 1
-        return self.nrNeurons
+        return self.nrNeurons - self.prunedWeights
         
 
     # predict output for given input

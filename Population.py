@@ -62,6 +62,7 @@ class Population:
         totalOOS = 0.0
         totalErr = 0.0
         totalTrain = 0.0
+        self.evaluateNrNeurons()
         for n in self.neuralNetworks:
             totalOOS += n.accuracyOOS
             self.averageAccOOS = totalOOS/self.popSize

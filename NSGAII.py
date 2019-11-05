@@ -18,7 +18,7 @@ class NSGAII:
         newParentList = []
         counter = 1
         while(len(newParentList) < lenPop):
-            for f in front[(counter)]: 
+            for f in front[(counter)]: # key error cause front two small 
                 newParentList.append(f)
             counter += 1
             if(len(newParentList) > lenPop):

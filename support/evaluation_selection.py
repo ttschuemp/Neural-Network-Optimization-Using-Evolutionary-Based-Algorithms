@@ -46,6 +46,7 @@ def fast_nondominated_sort(population): #ranks population
                 q.ndominated -= 1
                 if(q.ndominated==0): # if true the q is member of list H
                     H.append(q)
+            p.solution = []
         counter += 1
         front[(counter)] = H
         for t in front[(counter)]:
@@ -83,7 +84,7 @@ def crowding_distance_assignment(setI):
     setI[-1].crowdingDistance = 10e+6 #inf 
     # for all other points
     for j in range(1, length-1): 
-        setI[j].crowdingDistance += (setI[j+1].err[-1] - setI[j-1].err[-1])
+        setI[j].crowdingDistance += (setI[j+1].accuracyOOS - setI[j-1].accuracyOOS)
         
     setI.sort(key = takeNrNeurons) #sort list according to nrNeurons
     setI[0].crowdingDistance = 10e+6
