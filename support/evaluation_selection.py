@@ -26,10 +26,10 @@ def fast_nondominated_sort(population): #ranks population
     for p in population.neuralNetworks:
         for q in population.neuralNetworks:
 
-            if((p.accuracyOOS > q.accuracyOOS and p.nrNeurons <= q.nrNeurons)or(p.accuracyOOS >= q.accuracyOOS and p.nrNeurons < q.nrNeurons)):
+            if((p.accuracyVali > q.accuracyVali and p.nrNeurons <= q.nrNeurons)or(p.accuracyVali >= q.accuracyVali and p.nrNeurons < q.nrNeurons)):
             #if true then p dominates q 
                 p.solution.append(q)
-            if((p.accuracyOOS < q.accuracyOOS and p.nrNeurons >= q.nrNeurons)or(p.accuracyOOS <= q.accuracyOOS and p.nrNeurons > q.nrNeurons)):
+            if((p.accuracyVali < q.accuracyVali and p.nrNeurons >= q.nrNeurons)or(p.accuracyVali <= q.accuracyVali and p.nrNeurons > q.nrNeurons)):
             #if true p is dominated by q
                 p.ndominated += 1 #increment counter for p by how many it is dominated
         # if p wasn't dominated by any q then ndominated == 0
@@ -67,7 +67,7 @@ def fast_nondominated_sort(population): #ranks population
 
 def takeErr(elem):
     
-    return elem.accuracyOOS
+    return elem.accuracyVali
 
 def takeNrNeurons(elem):
     
@@ -84,7 +84,7 @@ def crowding_distance_assignment(setI):
     setI[-1].crowdingDistance = 10e+6 #inf 
     # for all other points
     for j in range(1, length-1): 
-        setI[j].crowdingDistance += (setI[j+1].accuracyOOS - setI[j-1].accuracyOOS)
+        setI[j].crowdingDistance += (setI[j+1].accuracyVali - setI[j-1].accuracyVali)
         
     setI.sort(key = takeNrNeurons) #sort list according to nrNeurons
     setI[0].crowdingDistance = 10e+6

@@ -12,9 +12,9 @@ mseDerivative, relu, reluDerivative, softmax, softmaxDerivative, crossEntropy, c
 
 class NeuralNetwork:
     #static variables 
-    maxNeurons = 300
-    minNeurons = 50
-    maxHiddenLayers = 6
+    maxNeurons = 150
+    minNeurons = 30
+    maxHiddenLayers = 4
     sizeInput = 784
     sizeOutput = 10
     
@@ -23,19 +23,22 @@ class NeuralNetwork:
         self.loss = loss
         self.lossDerivative = lossDerivative
         self.mutations = []
-#        self.learningRate = learningRate
-#        self.decreaseLR = decreaseLR
         self.accuracyTrain = float('NAN')
-        self.accuracyOOS = float('NAN')
-#        self.result = []
-        self.err = []
+        self.accuracyVali = float('NAN')
+        self.accuracyTest = float('NAN')
+        self.err = [] 
         self.prunedWeights = 0
         self.nrNeurons =  0
+        self.trainingIterations = 0
+        self.activationFunctions = []
          # variables for NSGAII
         self.solution = []
         self.ndominated = 0 
         self.crowdingDistance = float('NAN') 
-        self.dominantRank = float('NAN') 
+        self.dominantRank = float('NAN')
+        # variables for plotting
+        self.nrNeurons_h = []
+
 
     def add(self,index, layer): # add layer to NN
         self.layers.insert(index,layer)
@@ -48,20 +51,31 @@ class NeuralNetwork:
         #         calculate nr. of neurons
         n = 2
         i = 0
+        self.nrNeurons = 0
         for l in self.layers: # loop over every second element in list
             if i % n == 0 and i > 0: # i> 1 to skip the first layer
                 self.nrNeurons += l.neurons
             i += 1
         return self.nrNeurons - self.prunedWeights
+    
+    def getAF(self): 
+        n = 2
+        i = 0
+        self.activationFunctions = []
+        for l in self.layers: # loop over every second element in list
+            if i % n == 1:
+                self.activationFunctions.append(l.activation.__name__)
+            i += 1
+        
         
 
     # predict output for given input
-    def predict(self, inputs, target): # for predicting you need forwardPropagation only cause network already trained
+    def predict(self, inputs, target, testSample = False): # for predicting you need forwardPropagation only cause network already trained
         # sample dimension first
 #        target = target[:,None] # fix second dimension of vector
         r,d = target.shape
         row ,col = inputs.shape
-        scorecardOOS = []
+        scorecardVali = []
         estimation = np.zeros((r,d))*np.nan
 
         # run network over all samples
@@ -73,11 +87,14 @@ class NeuralNetwork:
                 output = l.forwardPropagation(output)
             estimation[i]= output
             if (np.argmax(output)== np.argmax(target[i])):
-                scorecardOOS.append(1)
+                scorecardVali.append(1)
             else: 
-                scorecardOOS.append(0)
-        scorecard_arrayOOS = np.asarray(scorecardOOS)
-        self.accuracyOOS = scorecard_arrayOOS.sum() /scorecard_arrayOOS.size
+                scorecardVali.append(0)
+        scorecard_arrayVali = np.asarray(scorecardVali)
+        if testSample == True: 
+            self.accuracyTest = scorecard_arrayVali.sum() /scorecard_arrayVali.size
+        else:
+            self.accuracyVali = scorecard_arrayVali.sum() /scorecard_arrayVali.size
     
         return estimation 
 #            print("YHat:", np.argmax(output))
@@ -93,8 +110,9 @@ class NeuralNetwork:
 
 
     # train the network
-    def train(self, xTrain, yTrain, epochs):
+    def train(self, xTrain, yTrain, epochs, minAcc = 1.0):
         self.nrNeurons =  self.getNrNeurons()
+        self.nrNeurons_h.append(self.nrNeurons)
         r, d = xTrain.shape # sample dimension first
         # training loop
         for i in range(epochs):
@@ -130,6 +148,11 @@ class NeuralNetwork:
             
             scorecard_arrayTrain = np.asarray(scorecardTrain)
             self.accuracyTrain = scorecard_arrayTrain.sum() /scorecard_arrayTrain.size
+            self.trainingIterations += 1
+            if self.accuracyTrain > minAcc:
+                break
+
+            
 #            plt.plot(range(epochs), self.err, markersize=3)
 #            plt.show()
 

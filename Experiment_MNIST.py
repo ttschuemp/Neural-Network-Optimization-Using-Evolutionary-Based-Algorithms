@@ -1,8 +1,9 @@
-# Experiment.py
+# Experiment_MNIST.py
 
 import pandas as pd
 import numpy as np
-
+import matplotlib.pyplot as plt
+plt.style.use("seaborn-whitegrid")
 
 from NeuralNetwork import NeuralNetwork
 from support.Layer import Layer
@@ -10,10 +11,7 @@ from support.ActivationLayer import ActivationLayer
 from support.Functions import tanh, tanhDerivative, sigmoid, sigmoidDerivative, mse, \
 mseDerivative, relu, reluDerivative, softmax, softmaxDerivative, crossEntropy, crossEntropyDerivative
 from support.Bootstrap import bootstrap
-import matplotlib
-matplotlib.use('MacOSX')
-import matplotlib.pyplot as plt
-plt.style.use("seaborn-whitegrid")
+
 
 # Data 
 dataPath = '/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_train (1).csv'

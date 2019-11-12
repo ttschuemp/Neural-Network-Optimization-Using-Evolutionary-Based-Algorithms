@@ -1,7 +1,7 @@
 # ExperimentEA.py
 
-import matplotlib
-matplotlib.use('MacOSX')
+#import matplotlib
+#matplotlib.use('MacOSX')
 import matplotlib.pyplot as plt
 plt.style.use("seaborn-whitegrid")
 import pandas as pd
@@ -9,6 +9,105 @@ from EvolutionaryAlgorithm import EvolutionaryAlgorithm
 from NSGAII import NSGAII
 from support.Bootstrap import bootstrap
 import numpy as np 
+
+
+#----------------------------------------------------------------------------------
+# Data 
+dataPath = '/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_train (1).csv'
+
+df = pd.read_csv(dataPath, sep=',', header=None, index_col=False)
+df = df.iloc[0:500,:]
+
+
+inputs = (np.asfarray(df.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
+targets = np.zeros((len(df),10)) + 0.01 # create target output values
+for i in range(len(df)):
+    j = df.iloc[i,0]
+    j=int(j)
+    targets[i,j] = 0.99  # all_values[0] is the target label for this record
+    pass
+
+
+
+dfnew=np.concatenate((inputs,targets), axis=1)
+pdDfNew = pd.DataFrame(dfnew)
+dfTrain, dfvalidation, dfTest = bootstrap(pdDfNew)
+del inputs, targets, i, j, pdDfNew, dfnew
+
+
+dfTrain_np= np.asarray(dfTrain)
+dfvalidation_np = np.asarray(dfvalidation) 
+dfTest_np = np.asarray(dfTest) 
+
+X = dfTrain_np[:,0:784]
+Y = dfTrain_np[:,784:]
+
+X_vali = dfvalidation_np[:,0:784]
+Y_vali = dfvalidation_np[:,784:]
+
+##
+
+
+## initialize ##
+EA = EvolutionaryAlgorithm(xTrain = X, yTrain = Y, 
+                           popSize = 20, xTest = X_vali, yTest = Y_vali)
+
+
+colours = ['bo', 'gx', 'r*', 'cv', 'm1', 'y2', 'k3', 'w4']
+
+# random initial population
+initialPopulation = EA.randomPop()
+nsga = NSGAII()
+
+population = initialPopulation
+
+
+## search ##
+it = 5
+z = 0.90
+for i in range(it):
+  
+    # train population
+#    EA.trainPop(population, epochs = 6) # train until acc. training set min 90 %
+ 
+    # reproduction and mutation
+    offSpring = EA.makeOffspring(population)
+    
+    # train off spring
+    EA.trainPop(population, epochs = 15, minAcc = z)
+    EA.trainPop(offSpring, epochs = 15, minAcc = z) 
+    z = z + 0.02
+   
+    # predict on validation data set (dont train the weights on this dataset only for hyperparameter adjustment)
+    EA.predPop(offSpring)
+    EA.predPop(population)
+ 
+    # evaluation & selection
+#    newPopParent = EA.updatePop(population, offSpring)
+    newPopParent = nsga.run(population, offSpring)
+    newPopParent.printPop()
+#    
+    population = newPopParent
+    for n in population.neuralNetworks:
+        plt.plot(n.accuracyOOS,n.nrNeurons, colours[i], markersize=5)
+    
+
+### report ##
+#    print("generation: ",i+1 , population.evaluatePop())
+#plt.axis([0,1 , 0,2000])
+
+plt.show()
+# fig1, axes = plt.subplots(1,2 figsize=(10,5))
+# axes[0].scatter(year, price)
+# plt.show()
+    
+
+#for n in offSpring.neuralNetworks:
+#    print(n.accuracyTrain)
+
+# TEST 
+
+
 
 
 #matplotlib.use('MacOSX')
@@ -81,98 +180,3 @@ import numpy as np
 #yTest = targets
 
 
-
-#----------------------------------------------------------------------------------
-# Data 
-dataPath = '/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/mnist_train (1).csv'
-
-df = pd.read_csv(dataPath, sep=',', header=None, index_col=False)
-df = df.iloc[0:500,:]
-
-
-inputs = (np.asfarray(df.iloc[:,1:]) / 255.0 * 0.99) + 0.01 # scale and shift the inputs 
-targets = np.zeros((len(df),10)) + 0.01 # create target output values
-for i in range(len(df)):
-    j = df.iloc[i,0]
-    j=int(j)
-    targets[i,j] = 0.99  # all_values[0] is the target label for this record
-    pass
-
-
-
-dfnew=np.concatenate((inputs,targets), axis=1)
-pdDfNew = pd.DataFrame(dfnew)
-dfTrain, dfvalidation, dfTest = bootstrap(pdDfNew)
-del inputs, targets, i, j, pdDfNew, dfnew
-
-
-dfTrain_np= np.asarray(dfTrain)
-dfvalidation_np = np.asarray(dfvalidation) 
-dfTest_np = np.asarray(dfTest) 
-
-X = dfTrain_np[:,0:784]
-Y = dfTrain_np[:,784:]
-
-X_vali = dfvalidation_np[:,0:784]
-Y_vali = dfvalidation_np[:,784:]
-
-##
-
-
-## initialize ##
-EA = EvolutionaryAlgorithm(xTrain = X, yTrain = Y, 
-                           popSize = 20, xTest = X_vali, yTest = Y_vali)
-
-
-colours = ['bo', 'gx', 'r*', 'cv', 'm1', 'y2', 'k3', 'w4']
-
-# random initial population
-initialPopulation = EA.randomPop()
-nsga = NSGAII()
-
-population = initialPopulation
-
-
-## search ##
-it = 6
-for i in range(it):
-  
-    # train population
-#    EA.trainPop(population, epochs = 6) # train until acc. training set min 90 %
- 
-    # reproduction and mutation
-    offSpring = EA.makeOffspring(population)
-  
-    # train off spring
-    EA.trainPop(population, epochs = 2)
-    EA.trainPop(offSpring, epochs = 2) 
-    
-   
-    # predict on validation data set (dont train the weights on this dataset only for hyperparameter adjustment)
-    EA.predPop(offSpring)
-    EA.predPop(population)
- 
-    # evaluation & selection
-#    newPopParent = EA.updatePop(population, offSpring)
-    newPopParent = nsga.run(population, offSpring)
-    newPopParent.printPop()
-#    
-    population = newPopParent
-    for n in population.neuralNetworks:
-        plt.plot(n.accuracyOOS,n.nrNeurons, colours[i], markersize=10)
-    
-
-### report ##
-#    print("generation: ",i+1 , population.evaluatePop())
-#plt.axis([0,1 , 0,2000])
-
-plt.show()
-# fig1, axes = plt.subplots(1,2 figsize=(10,5))
-# axes[0].scatter(year, price)
-# plt.show()
-    
-
-#for n in offSpring.neuralNetworks:
-#    print(n.accuracyTrain)
-
-# TEST 

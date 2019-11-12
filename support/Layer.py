@@ -49,7 +49,7 @@ class Layer(Layers):
     
     def jitterWeights(self): # gaussian noise to each weight with prob 0.3, x dist-> N(0, 0.01)
         numrows, numcols = self.weights.shape
-        prob = 0.3
+        prob = 0.5
         sigma = 0.05
         mu = 0
         index = np.random.rand(numrows, numcols) < prob # idex of jitter weights 

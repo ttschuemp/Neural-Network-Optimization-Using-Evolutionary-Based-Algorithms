@@ -10,7 +10,7 @@ class Population:
         self.popSize = len(neuralNetworks)
         self.neuralNetworks = neuralNetworks
         self.averageAccTrain = float('NAN')
-        self.averageAccOOS = float('NAN')
+        self.averageAccVali = float('NAN')
         self.elitestNN = []
         self.averageErr = float('NAN')
         self.averageNeurons = float('NAN')
@@ -40,17 +40,17 @@ class Population:
         for n in self.neuralNetworks: 
             if n.dominantRank == 1:
                 self.elitestNN.append(n)
-                print("Best NN: ","IS: ", n.accuracyTrain, "OS: ", n.accuracyOOS, "nrNeurons: ", n.nrNeurons)
+                print("Best NN: ","IS: ", n.accuracyTrain, "OS: ", n.accuracyVali, "nrNeurons: ", n.nrNeurons)
                 pass
             # average Accuracy over pop out of sample
             totalOOS += n.accuracyOOS
-            self.averageAccOOS = totalOOS/self.popSize
+            self.averageAccVali = totalOOS/self.popSize
             # average Error over pop.
             totalErr += n.err[-1]
             self.averageErr = totalErr/self.popSize
             
 
-        return self.averageAccTrain, self.averageAccOOS, self.averageErr, self.averageNeurons;
+        return self.averageAccTrain, self.averageAccVali, self.averageErr, self.averageNeurons;
     
     def evaluateNrNeurons(self): 
         totalNeurons = 0
@@ -64,26 +64,29 @@ class Population:
         totalTrain = 0.0
         self.evaluateNrNeurons()
         for n in self.neuralNetworks:
-            totalOOS += n.accuracyOOS
-            self.averageAccOOS = totalOOS/self.popSize
+            totalOOS += n.accuracyVali
+            self.averageAccVali = totalOOS/self.popSize
             # average Error over pop.
             totalErr += n.err[-1]
             self.averageErr = totalErr/self.popSize
             totalTrain += n.accuracyTrain
             self.averageAccTrain = totalTrain/self.popSize
+            n.getAF()
             
         print('############# Print Population #################')
-        print('Population Size: ', self.popSize)
-        print('Av. Error: ', self.averageErr[-1], 'Av. Neurons: ',self.averageNeurons,)
-        print('Av. Acc. Train: ',self.averageAccTrain, 'Av. Acc. Vali: ', self.averageAccOOS)
+        print('Population Size: ',self.popSize)
+        print('Av. Error: {:.2f}'.format(self.averageErr[-1]), 'Av. Neurons: {:.2f}'.format(self.averageNeurons))
+        print('Av. Acc. Train: {:.2f}%'.format(self.averageAccTrain*100), 'Av. Acc. Vali: {:.2f}%'.format(100*self.averageAccVali))
         print('------------------------------------------------')
         i = 0
         for n in self.neuralNetworks:
-            print('NN nr:', i)
-            print('Acc. Training: ', n.accuracyTrain, 'Acc. Vali: ', n.accuracyOOS)
+            print('NN nr:', i, 'Training Iterations: ', n.trainingIterations)
+            print('Acc. Training: {:.2f}%'.format(n.accuracyTrain*100), 'Acc. Vali: {:.2f}%'.format(n.accuracyVali*100))
             print('Mutations: ', n.mutations)
             print('Nr. Neurons: ', n.nrNeurons, 'Pruned Neurons: ', n.prunedWeights)
-            print('Hidden Layers: ', (len(n.layers)- 4) /2)
+            print('Connections: {:.1f}%'.format(100-n.prunedWeights/n.nrNeurons*100))
+            print('AF: ', n.activationFunctions)
+            print('Hidden Layers: ', int((len(n.layers)- 4) /2))
             print('------------------------------------------------')
             i +=1
         print('####################################################')

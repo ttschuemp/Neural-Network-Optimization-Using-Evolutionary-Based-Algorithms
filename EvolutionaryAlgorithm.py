@@ -9,33 +9,32 @@ from support.MutationAction import mutationAction
 from NeuralNetwork import NeuralNetwork
 from support.Evaluation_Selection import singleobjective
 
-# Initialization
 
 
 class EvolutionaryAlgorithm:
     
-    def __init__(self, xTrain, yTrain, popSize, xTest, yTest):
+    def __init__(self, xTrain, yTrain, popSize):
         self.popSize = popSize
         self.xTrain = xTrain
         self.yTrain = yTrain
-        self.xTest = xTest
-        self.yTest = yTest
         
         
-    def randomPop(self, noHiddenLayers= False):
+        
+        
+    def randomPop(self, loss, lossDerivative, noHiddenLayers= False):
         NNlist = []
         for i in range(self.popSize):
             randomLayers = initializeParameters(noHiddenLayers=noHiddenLayers)
-            nn = NeuralNetwork(randomLayers)
+            nn = NeuralNetwork(randomLayers, loss= loss , lossDerivative = lossDerivative)
             NNlist.append(nn)
             pass
         popNN = Population(NNlist)
         return popNN
 
     # Train Population
-    def trainPop(self, population, epochs): # popList gets a list of NN
+    def trainPop(self, population, epochs, minAcc = 1.0): # popList gets a list of NN
         for n in population.neuralNetworks: # iterate over nn list 
-             n.train(self.xTrain, self.yTrain, epochs)
+             n.train(self.xTrain, self.yTrain, epochs, minAcc)
              
 
 
@@ -47,11 +46,17 @@ class EvolutionaryAlgorithm:
         
         # mutation
         for n in populationCopy.neuralNetworks:
-#            mutationAction(1, n) # every child gets new layer
             x = np.random.poisson(1) 
             for i in range(x+1): # # mutation operations get executed with x+1; x = Poi(1)
-                ranInt = np.random.randint(4)+1 # get random integers from 2-4
-                mutationAction(ranInt, n) # manipulates a neural network 
+                ranInt = np.random.randint(1,3) # get random integers from 1-2
+                # only mutation 1-2
+                mutationAction(ranInt, n) # manipulates a neural network
+                
+                ranInt = np.random.randint(3,5)
+                # only mutation 3-4
+                mutationAction(ranInt, n)
+
+                
 
                 
         offSpringPopulation = populationCopy
@@ -59,11 +64,13 @@ class EvolutionaryAlgorithm:
         return offSpringPopulation
     
     
-    def predPop(self, population): 
+    def predPop(self, population, X, Y, output = False, testSample = False): 
         for n in population.neuralNetworks:
-            nx=n.predict(self.xTest, self.yTest)
-            del nx
-    
+            pred=n.predict(inputs = X, target = Y, testSample = testSample)
+            if output == False:
+                del pred
+            else: 
+                return pred
 
 
     def updatePop(self, popParent, popOffSpring): 
@@ -73,7 +80,6 @@ class EvolutionaryAlgorithm:
         popParent = singleobjective(popParent, popOffSpring)
 
         return popParent
-
 
 
 
