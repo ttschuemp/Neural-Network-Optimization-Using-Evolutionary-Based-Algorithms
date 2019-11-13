@@ -12,11 +12,11 @@ mseDerivative, relu, reluDerivative, softmax, softmaxDerivative, crossEntropy, c
 
 class NeuralNetwork:
     #static variables 
-    maxNeurons = 150
-    minNeurons = 30
-    maxHiddenLayers = 4
-    sizeInput = 784
-    sizeOutput = 10
+    maxNeurons = 0
+    minNeurons = 0
+    maxHiddenLayers = 0
+    sizeInput = 0
+    sizeOutput = 0
     
     def __init__(self, layerList, loss = crossEntropy, lossDerivative = crossEntropyDerivative):
         self.layers = layerList
@@ -31,6 +31,7 @@ class NeuralNetwork:
         self.nrNeurons =  0
         self.trainingIterations = 0
         self.activationFunctions = []
+        self.totalWeights = 0
          # variables for NSGAII
         self.solution = []
         self.ndominated = 0 
@@ -38,6 +39,14 @@ class NeuralNetwork:
         self.dominantRank = float('NAN')
         # variables for plotting
         self.nrNeurons_h = []
+        self.accuracyTrain_h = []
+        self.accuracyVali_h= []
+        self.accuracyTest_h= []
+        self.err_h = []
+        self.trainingIterations_h = []
+        self.prunedWeights_h= []
+        self.accuracyTrain_h_iteration = []
+        
 
 
     def add(self,index, layer): # add layer to NN
@@ -52,11 +61,26 @@ class NeuralNetwork:
         n = 2
         i = 0
         self.nrNeurons = 0
+        self.totalWeights = 0
         for l in self.layers: # loop over every second element in list
-            if i % n == 0 and i > 0: # i> 1 to skip the first layer
-                self.nrNeurons += l.neurons
+            if i % n == 0: 
+                self.nrNeurons += l.weights.shape[0]
+                self.totalWeights += l.totalWeights_layer
             i += 1
-        return self.nrNeurons - self.prunedWeights
+        return self.nrNeurons + NeuralNetwork.sizeOutput
+    
+    
+    def getNrPrunedWeights(self):
+        n = 2
+        i = 0
+        self.prunedWeights = 0
+        for l in self.layers: # loop over every second element in list
+            if i % n == 0: 
+                index = l.weights == 0
+                summ = index.sum()
+                self.prunedWeights += summ
+            i += 1
+        return self.prunedWeights
     
     def getAF(self): 
         n = 2
@@ -112,7 +136,7 @@ class NeuralNetwork:
     # train the network
     def train(self, xTrain, yTrain, epochs, minAcc = 1.0):
         self.nrNeurons =  self.getNrNeurons()
-        self.nrNeurons_h.append(self.nrNeurons)
+        self.prunedWeights = self.getNrPrunedWeights()
         r, d = xTrain.shape # sample dimension first
         # training loop
         for i in range(epochs):
@@ -141,13 +165,17 @@ class NeuralNetwork:
                 for l in reversed(self.layers):     # Error is in example e 1x3 matrix/vector
                     error = l.backwardPropagation(error)
             # calculate average error on all samples
-            err /= r
+            # for plotting only
+            err /= r 
             self.err.append(err)
+            err_ = np.sum(err)/err.shape[0]
+            self.err_h.append(err_)
 #                print("av error: ", err)
 #            self.learningRate *= self.decreaseLR
             
             scorecard_arrayTrain = np.asarray(scorecardTrain)
             self.accuracyTrain = scorecard_arrayTrain.sum() /scorecard_arrayTrain.size
+            self.accuracyTrain_h_iteration.append(self.accuracyTrain)
             self.trainingIterations += 1
             if self.accuracyTrain > minAcc:
                 break

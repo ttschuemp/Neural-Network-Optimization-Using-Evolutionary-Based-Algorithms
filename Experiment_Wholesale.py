@@ -14,7 +14,7 @@ mseDerivative, relu, reluDerivative, softmax, softmaxDerivative, crossEntropy, c
 from support.Bootstrap import bootstrap, standardize, transformY
 from EvolutionaryAlgorithm import EvolutionaryAlgorithm
 from NSGAII import NSGAII
-from support.plotting_helper import plot_objectives
+from support.plotting_helper import plot_objectives, plot_LossIteration
 
 
 # Data 
@@ -48,7 +48,7 @@ X_test = np.asanyarray(data_test.iloc[:,1:])
 
 
 # initialize 
-popSize = 10
+popSize = 6 
 it = 10 # iterations
 minAcc = 0.90
 
@@ -69,7 +69,7 @@ initialPopulation = EA.randomPop(loss = crossEntropy, lossDerivative = crossEntr
 population = initialPopulation
 
 for t in range(it):
-
+    print('** GENERATION',t+1,'**')
     # reproduction and mutation
     offSpring = EA.makeOffspring(population)
     
@@ -84,6 +84,8 @@ for t in range(it):
  
     # selection
     newPopParent = NSGA.run(population, offSpring)
+    # get the test accuracy (only for plotting purpose)
+    EA.predPop(newPopParent, X = X_test, Y = y_test, testSample = True)
     newPopParent.printPop()
 
     population = newPopParent
@@ -92,11 +94,15 @@ for t in range(it):
     
     
     
-    # get the test accuracy (only for plotting purpose)
-    EA.predPop(population, X = X_test, Y = y_test, testSample = True)
-    plot_objectives(population)
 
+    
+    
+    
+plot_objectives(population)
+plt.show()
 
+plot_LossIteration(population)
+plt.show()
 
 
 

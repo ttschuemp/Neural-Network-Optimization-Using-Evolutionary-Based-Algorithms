@@ -112,7 +112,7 @@ def jitterNN(neuralNetwork):
 
 def pruning(neuralNetwork): # delete the smalest 1 %  exept for output layer
     nrNeurons = neuralNetwork.getNrNeurons()
-    prunFaktor = 0.05
+    prunFaktor = 0.1
     nrPruns = round(nrNeurons * prunFaktor)
     n = 2 # iterate over every second element
     i = 0 
@@ -125,7 +125,6 @@ def pruning(neuralNetwork): # delete the smalest 1 %  exept for output layer
             if (nrPruns <= deleted):
                 break
             i += 1
-    neuralNetwork.prunedWeights += deleted
     neuralNetwork.mutations.append('pruning')
         
 

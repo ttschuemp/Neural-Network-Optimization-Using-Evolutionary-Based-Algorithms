@@ -9,7 +9,7 @@ class Layer(Layers):
 #        np.random.seed(2)
         self.weights = np.random.randn(inputSize, outputSize) * 0.1 # * 0.01 keep initial weights small
         self.bias = np.random.randn(1, outputSize) * 0.1
-        self.neurons = inputSize
+        self.totalWeights_layer = inputSize * outputSize
         # Adam
         self.alpha = 0.0001 # stepsize # needs to be tuned!! # default 0.001
         self.beta1 = 0.9 # Exponential decay rates for the moment estimates
