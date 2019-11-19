@@ -17,7 +17,7 @@ class EvolutionaryAlgorithm:
         self.popSize = popSize
         self.xTrain = xTrain
         self.yTrain = yTrain
-        
+        self.exp_nrNeurons_h = []
         
         
         
@@ -35,6 +35,8 @@ class EvolutionaryAlgorithm:
     def trainPop(self, population, epochs, minAcc = 1.0): # popList gets a list of NN
         for n in population.neuralNetworks: # iterate over nn list 
              n.train(self.xTrain, self.yTrain, epochs, minAcc)
+             self.exp_nrNeurons_h.append(n.nrNeurons)
+             n.nrNeurons_h.append(n.nrNeurons)
              
 
 
@@ -52,8 +54,8 @@ class EvolutionaryAlgorithm:
                 # only mutation 1-2
                 mutationAction(ranInt, n) # manipulates a neural network
                 
-                ranInt = np.random.randint(3,5)
-                # only mutation 3-4
+                ranInt = np.random.randint(3,6)
+                # only mutation 3-5
                 mutationAction(ranInt, n)
 
                 
@@ -71,6 +73,8 @@ class EvolutionaryAlgorithm:
                 del pred
             else: 
                 return pred
+
+        
 
 
     def updatePop(self, popParent, popOffSpring): 

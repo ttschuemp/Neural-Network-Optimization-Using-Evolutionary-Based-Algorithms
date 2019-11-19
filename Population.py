@@ -26,21 +26,16 @@ class Population:
         populationCopy = copy.deepcopy(population)
         return populationCopy
     
-#    def getListofX(self):
-#        arrayList =[] 
-#        for n in self.neuralNetworks:
-#            a = np.asarray(n.err_h)
-#            arrayList.append(a)
-#            a_min = 999999
-#        for e in arrayList:
-#            a =len(e)
-#            if a < a_min
-#                a_min = a
-#        i =0
-#        for e in arrayList: 
-#            np.concatenate((e[0:a_min], b), axis=0)
-#        
-#        return arrayList
+    def Top5average(self):
+        a=[]
+        for n in self.neuralNetworks:
+            d=int(len(n.accuracyTest_h))
+            a += n.accuracyTest_h
+        a = np.asarray(a)
+        a = np.reshape(a,(self.popSize,d))
+        a_sorted = np.sort(a,axis =0)[::-1] 
+        averageTop5 = np.mean(a_sorted[0:5,:], axis=0)
+        return averageTop5
 
         
 #    def evaluatePop(self): 
@@ -110,9 +105,8 @@ class Population:
             n.accuracyTest_h.append(n.accuracyTest)
             print('Mutations: ', n.mutations)
             print('Nr. Neurons: ', n.nrNeurons, 'Pruned Weights: ', n.prunedWeights)
-            n.nrNeurons_h.append(n.nrNeurons)
             pweights = n.getNrPrunedWeights()
-            print('Connections: {:.1f}%'.format(100-pweights/(n.totalWeights)*100))
+#            print('Connections: {:.1f}%'.format(100-pweights/(n.totalWeights)*100))
             print('AF: ', n.activationFunctions)
             print('Hidden Layers: ', int((len(n.layers)- 4) /2))
             print('------------------------------------------------')

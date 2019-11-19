@@ -38,9 +38,7 @@ class Layer(Layers):
 ##        self.weightsE_old = np.ones((inputSize, outputSize))-0.5
 ##        self.dw_old = np.random.uniform(-0.1, 0.1, size=(1, outputSize))
 
-        
-        
-        
+
     
     def changeSize(self, layer, inputSize, outputSize):
         layer.weights = np.random.randn(inputSize, outputSize) * 0.1
@@ -49,8 +47,8 @@ class Layer(Layers):
     
     def jitterWeights(self): # gaussian noise to each weight with prob 0.3, x dist-> N(0, 0.01)
         numrows, numcols = self.weights.shape
-        prob = 0.5
-        sigma = 0.05
+        prob = 0.3
+        sigma = 0.2
         mu = 0
         index = np.random.rand(numrows, numcols) < prob # idex of jitter weights 
         noise = np.random.normal(mu, sigma, size = (numrows, numcols))
@@ -104,6 +102,7 @@ class Layer(Layers):
         # bias
         mHatb = self.mb/(1 - self.beta1**self.t)
         vHatb = self.vb/(1 - self.beta2**self.t)
+        
         # update
         self.weights = self.weights - self.alpha * ((mHat)/(np.sqrt(vHat) - self.epsilon))
         self.bias = self.bias - self.alpha * ((mHatb)/(np.sqrt(vHatb) - self.epsilon))

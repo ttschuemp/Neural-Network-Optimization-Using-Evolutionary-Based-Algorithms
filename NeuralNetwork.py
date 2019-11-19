@@ -41,11 +41,14 @@ class NeuralNetwork:
         self.nrNeurons_h = []
         self.accuracyTrain_h = []
         self.accuracyVali_h= []
+        self.activationFunctions_h = []
         self.accuracyTest_h= []
         self.err_h = []
         self.trainingIterations_h = []
         self.prunedWeights_h= []
         self.accuracyTrain_h_iteration = []
+        self.activationFunctions_hh = []
+
         
 
 
@@ -86,12 +89,22 @@ class NeuralNetwork:
         n = 2
         i = 0
         self.activationFunctions = []
+        af =[] 
         for l in self.layers: # loop over every second element in list
             if i % n == 1:
                 self.activationFunctions.append(l.activation.__name__)
+                if l.activation.__name__ == 'tanh':
+                    af.append(1)
+                elif l.activation.__name__== 'sigmoid':
+                    af.append(2)
+                elif l.activation.__name__ == 'relu':
+                    af.append(3)
             i += 1
-        
-        
+        self.activationFunctions_h.append(af)
+        self.activationFunctions_hh.append(self.activationFunctions)
+
+            
+
 
     # predict output for given input
     def predict(self, inputs, target, testSample = False): # for predicting you need forwardPropagation only cause network already trained

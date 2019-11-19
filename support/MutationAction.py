@@ -15,8 +15,9 @@ def addLayer(neuralNetwork): # adds layer with XY neurons to last layer (inputla
     
     # network already > max Hidden layers ?
     if len(neuralNetwork.layers) >= (4 + NeuralNetwork.maxHiddenLayers*2): # cause 4 is a network with no hidden layer
-        ranInt = np.random.randint(1,5) # random int 2-4
-        mutationAction(ranInt ,neuralNetwork)
+        return
+#        ¨¨ranInt = np.random.randint(1,5) # random int 2-4
+#        mutationAction(ranInt ,neuralNetwork)
         
     else:
         # new layer
@@ -51,8 +52,9 @@ def rmvLayer(neuralNetwork): # removes random a hidden layer, hidden layers clos
     # Network to small ? one hidden layer is the minimal structure
     leng = len(neuralNetwork.layers)
     if leng <= 6:
-        ranInt = np.random.randint(1,5)
-        mutationAction(ranInt ,neuralNetwork)
+        return
+#        ranInt = np.random.randint(1,5)
+#        mutationAction(ranInt ,neuralNetwork)
         
     else: 
         # not just the last layer remove, remove a random layer
@@ -76,16 +78,7 @@ def rmvLayer(neuralNetwork): # removes random a hidden layer, hidden layers clos
         neuralNetwork.layers[i-2].vb = 0
         neuralNetwork.layers[i-2].t = 0
         neuralNetwork.mutations.append('rmv layer')
-#        ----------------------------------
-#        size = len(neuralNetwork.layers[-4].weights) # col length, -4 cause this will be the last non-activation layer
-#        neuralNetwork.rmv(neuralNetwork.layers[-2]) # rmv second last layer
-#        neuralNetwork.rmv(neuralNetwork.layers[-1])  # rmv last layer
-#        neuralNetwork.layers[-2].changeSize(neuralNetwork.layers[-2], size, NeuralNetwork.sizeOutput)
 
-
-## has no effect if larningAlgrithm is Rprop
-#def changeLr(neuralNetwork): # new and random learning rate
-#    neuralNetwork.learningRate = np.random.rand()
 
 
 def jitterNN(neuralNetwork):
@@ -97,17 +90,7 @@ def jitterNN(neuralNetwork):
             l.jitterWeights()
         i += 1
     neuralNetwork.mutations.append('jitter')
-    
-    
-#def changeAL(neuralNetwork):
-#    lenLayers = len(neuralNetwork.layers)
-#    prob = 0.3
-#    index = np.random.rand(1, lenLayers) < prob
-#    for i in range(lenLayers):
-#        index[i%2==0]= False # exclude all weight layers
-#    index = np.where(index == True) # gives indices of layers that get randomly changed
-#        
-#    neuralNetwork.mutations.append('changeAL')
+
 
 
 def pruning(neuralNetwork): # delete the smalest 1 %  exept for output layer
@@ -123,9 +106,25 @@ def pruning(neuralNetwork): # delete the smalest 1 %  exept for output layer
             if i % n == 0 and l != neuralNetwork.layers[-2]: # exclude output layer
                 deleted += l.pruningWeights() #starts with last layer until nrPruns is satisfied
             if (nrPruns <= deleted):
+                neuralNetwork.mutations.append('pruning')
                 break
             i += 1
-    neuralNetwork.mutations.append('pruning')
+    
+def changeAL(neuralNetwork):
+    lenLayers = len(neuralNetwork.layers)
+    prob = 0.5
+    index = np.random.rand(1, lenLayers) < prob
+    for i in range(0, lenLayers, 2):
+        index[0,i] = False # exclude all weight layers
+    index[0,-1] = False # exclude last activation layer
+    if np.all(index == False):
+        return
+    _,index = np.where(index == True) # gives indices of layers that get randomly changed
+    for i in range(len(index)): 
+        newAF = randomActivationLayer()
+        del neuralNetwork.layers[index[i]]
+        neuralNetwork.layers.insert(index[i], newAF)
+    neuralNetwork.mutations.append('changeAL')
         
 
 def mutationAction(action, direc): # switch like function
@@ -134,6 +133,7 @@ def mutationAction(action, direc): # switch like function
         2: rmvLayer,
         3: jitterNN,
         4: pruning,
+        5: changeAL, 
         }
     
     # Get the function from switcher dictionary
