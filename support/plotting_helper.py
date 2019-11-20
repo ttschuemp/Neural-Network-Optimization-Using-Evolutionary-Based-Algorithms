@@ -16,37 +16,38 @@ colours =['#393b79','#5254a3', '#6b6ecf', '#9c9ede', '#637939', '#8ca252', '#b5c
 
 
 def plot_objectives(Populations): 
-    leng= len(Populations[0].neuralNetworks[0].accuracyTrain_h)
     fig1, axes = plt.subplots(2,2, figsize=(10,5))
-    fig1.suptitle('Test')
     j = 0
     for p in Populations:
-        for i in range(leng):
-            for n in p.neuralNetworks:
-                u = (np.random.rand(4)-0.5)*1.5
-                hiddenlayers = int((len(n.layers)- 4)/2)
-                volume = hiddenlayers*50
-    #            axes[0].scatter(n.accuracyVali_h[i], n.nrNeurons_h[i]+u[1], s=volume, alpha =0.6, color = colors[i])
-                if j == 0:
-                    axes[0,0].scatter(n.accuracyTest_h[i], n.nrNeurons_h[i]+u[2], s=volume, alpha = 0.6,color = colors[i])
-                if j == 1:
-                    axes[0,1].scatter(n.accuracyTest_h[i], n.nrNeurons_h[i]+u[2], s=volume, alpha = 0.6,color = colors[i])
-                if j == 2:
-                    axes[1,0].scatter(n.accuracyTest_h[i], n.nrNeurons_h[i]+u[2], s=volume, alpha = 0.6,color = colors[i])
-                if j == 3:
-                    axes[1,1].scatter(n.accuracyTest_h[i], n.nrNeurons_h[i]+u[2], s=volume, alpha = 0.6,color = colors[i])
+        for n in p.neuralNetworks:
+            u = (np.random.rand(4)-0.5)
+#            hiddenlayers = int((len(n.layers_h[i])- 4)/2)
+            volume = np.asarray(n.layers_h)**2
+            u= (np.random.rand(len(n.nrNeurons_h))-0.5)*0.5
+            jitterednr = np.asarray(n.nrNeurons_h) + u
+            u2 =(np.random.rand(len(n.accuracyTest_h))-0.5)*0.001
+            jitteredacc =np.asarray(n.accuracyTest_h) +u2
+#            axes[0].scatter(n.accuracyVali_h[i], n.nrNeurons_h[i]+u[1], s=volume, alpha =0.6, color = colors[i])
+            if j == 0:
+                axes[0,0].scatter(jitteredacc, jitterednr, s = volume , c = sns.cubehelix_palette(10,reverse=True))
+            if j == 1: 
+                axes[0,1].scatter(jitteredacc, jitterednr, s = volume , c = sns.cubehelix_palette(10,reverse=True))
+            if j == 2:
+                axes[1,0].scatter(jitteredacc, jitterednr, s = volume , c = sns.cubehelix_palette(10,reverse=True))
+            if j == 3:
+                axes[1,1].scatter(jitteredacc, jitterednr, s = volume , c = sns.cubehelix_palette(10,reverse=True))
         j+=1
     axes[0,0].set_ylabel('Number of Neurons')
-    axes[0,0].set_xlabel('Accuracy Test Data')
+    axes[0,0].set_xlabel('Accuracy Test Set')
     axes[0,0].set_title('Population Size 6')
     axes[1,0].set_ylabel('Number of Neurons')
-    axes[1,0].set_xlabel('Accuracy Test Data')
+    axes[1,0].set_xlabel('Accuracy Test Set')
     axes[1,0].set_title('Population Size 18')
     axes[0,1].set_ylabel('Number of Neurons')
-    axes[0,1].set_xlabel('Accuracy Test Data')
+    axes[0,1].set_xlabel('Accuracy Test Set')
     axes[0,1].set_title('Population Size 12')
     axes[1,1].set_ylabel('Number of Neurons')
-    axes[1,1].set_xlabel('Accuracy Test Data')
+    axes[1,1].set_xlabel('Accuracy Test Set')
     axes[1,1].set_title('Population Size 24')
     plt.show()
 
@@ -57,27 +58,34 @@ def plot_IterationSGD(Populations):
         for n in p.neuralNetworks:
             it = np.array(range(len(n.err_h)))
     #        axes[0,0].plot(it, n.err_h, color = 'midnightblue', alpha = 0.2)
+            u = (np.random.rand()-0.5)*0.005
+            array = np.asarray(n.accuracyTrain_h_iteration)
             if j == 0:
-                axes[0,0].plot(it, n.accuracyTrain_h_iteration, color = 'midnightblue', alpha = 0.2)    
+                axes[0,0].plot(it, array+u, color = 'midnightblue', alpha = 0.3)    
             if j == 1:
-                axes[0,1].plot(it, n.accuracyTrain_h_iteration, color = 'midnightblue', alpha = 0.2)
+                axes[0,1].plot(it, array+u, color = 'midnightblue', alpha = 0.3)
             if j == 2:
-                axes[1,0].plot(it, n.accuracyTrain_h_iteration, color = 'midnightblue', alpha = 0.2)
+                axes[1,0].plot(it, array+u, color = 'midnightblue', alpha = 0.3)
             if j == 3:
-                axes[1,1].plot(it, n.accuracyTrain_h_iteration, color = 'midnightblue', alpha = 0.2)
+                axes[1,1].plot(it, array+u, color = 'midnightblue', alpha = 0.3)
         j+=1
-    axes[0,0].set_ylabel('Accuracy Test Data')
+    axes[0,0].set_ylabel('Accuracy Training Set')
     axes[0,0].set_xlabel('Steps')
     axes[0,0].set_title('Population Size 6')
-    axes[1,0].set_ylabel('Accuracy Test Data')
+    axes[1,0].set_ylabel('Accuracy Training Set')
     axes[1,0].set_xlabel('Steps')
     axes[1,0].set_title('Population Size 18')
-    axes[0,1].set_ylabel('Accuracy Test Data')
+    axes[0,1].set_ylabel('Accuracy Training Set')
     axes[0,1].set_xlabel('Steps')
     axes[0,1].set_title('Population Size 12')
-    axes[1,1].set_ylabel('Accuracy Test Data')
+    axes[1,1].set_ylabel('Accuracy Training Set')
     axes[1,1].set_xlabel('Steps')
     axes[1,1].set_title('Population Size 24')
+    axes[0,0].set_ylim([0.8,1])
+    axes[0,1].set_ylim([0.8,1])
+    axes[1,0].set_ylim([0.8,1])
+    axes[1,1].set_ylim([0.8,1])
+
     
     
 # still need to add the average over the top 5 
@@ -89,18 +97,18 @@ def plot_testAcc(Populations):
     for p in Populations:
         for n in p.neuralNetworks:
             u = (np.random.rand(len(n.accuracyTest_h))-0.5)*0.01
-            acc=n.accuracyTest_h+u
+            acc=n.accuracyTest_h+u 
             acc= np.insert(acc,0, 0)
             generation = range(len(n.accuracyTest_h)+1)
             generation_ =range(1,len(n.accuracyTest_h)+1)
             if j == 0:
-                axes[0,0].plot(generation ,acc , color = 'midnightblue', alpha = 0.2)
+                axes[0,0].plot(generation ,acc , color = 'midnightblue', alpha = 0.3)
             if j == 1:
-                axes[0,1].plot(generation ,acc , color = 'midnightblue', alpha = 0.2)
+                axes[0,1].plot(generation ,acc , color = 'midnightblue', alpha = 0.3)
             if j == 2: 
-                axes[1,0].plot(generation ,acc , color = 'midnightblue', alpha = 0.2)
+                axes[1,0].plot(generation ,acc , color = 'midnightblue', alpha = 0.3)
             if j == 3:
-                axes[1,1].plot(generation ,acc , color = 'midnightblue', alpha = 0.2)
+                axes[1,1].plot(generation ,acc , color = 'midnightblue', alpha = 0.3)
 #            u = np.zeros(len(generation_))+(np.random.rand()-0.5)
     #        axes[1].plot(generation_, n.nrNeurons_h+u, color = 'midnightblue', alpha = 0.2)
         average = p.Top5average()
@@ -113,20 +121,24 @@ def plot_testAcc(Populations):
         if j == 3:
             axes[1,1].plot(generation_, average, color= 'midnightblue', linewidth=3)
         j+=1
-    axes[0,0].set_ylim([0.5,1])
-    axes[0,1].set_ylim([0.5,1])
-    axes[1,0].set_ylim([0.5,1])
-    axes[1,1].set_ylim([0.5,1])
-    axes[0,0].set_ylabel('Accuracy Test Data')
+    axes[0,0].set_ylim([0.80,1])
+    axes[0,1].set_ylim([0.80,1])
+    axes[1,0].set_ylim([0.80,1])
+    axes[1,1].set_ylim([0.80,1])
+    axes[0,0].set_xlim([1,10])
+    axes[0,1].set_xlim([1,10])
+    axes[1,0].set_xlim([1,10])
+    axes[1,1].set_xlim([1,10])
+    axes[0,0].set_ylabel('Accuracy Test Set')
     axes[0,0].set_xlabel('Generations')
     axes[0,0].set_title('Population Size 6')
-    axes[1,0].set_ylabel('Accuracy Test Data')
+    axes[1,0].set_ylabel('Accuracy Test Set')
     axes[1,0].set_xlabel('Generations')
     axes[1,0].set_title('Population Size 18')
-    axes[0,1].set_ylabel('Accuracy Test Data')
+    axes[0,1].set_ylabel('Accuracy Test Set')
     axes[0,1].set_xlabel('Generations')
     axes[0,1].set_title('Population Size 12')
-    axes[1,1].set_ylabel('Accuracy Test Data')
+    axes[1,1].set_ylabel('Accuracy Test Set')
     axes[1,1].set_xlabel('Generations')
     axes[1,1].set_title('Population Size 24')
         
@@ -137,8 +149,8 @@ def plot_exploration(EAs, it):
     j=0
     for ea in EAs: 
         array= np.asarray(ea.exp_nrNeurons_h)
-        array = np.reshape(array,(it[-1]+1, (2*ea.popSize)))
-        for i in range(ea.popSize): 
+        array = np.reshape(array,(it, (2*ea.popSize))) # *2 cause its exploration means offspring and population together
+        for i in range(it): 
             x = (i+1) + np.zeros(2*ea.popSize)
             if j==0:
                 axes[0,0].scatter(x, array[i,:], color = 'midnightblue', alpha = 0.7)
@@ -150,8 +162,17 @@ def plot_exploration(EAs, it):
                 axes[1,1].scatter(x, array[i,:], color = 'midnightblue', alpha = 0.7)
         j+=1
     axes[0,0].set_ylabel('Number of Neurons')
-    axes[0,0].set_xlabel('Generation')
-    
+    axes[0,0].set_xlabel('Generations')
+    axes[0,0].set_title('Population Size 6')
+    axes[1,0].set_ylabel('Number of Neurons')
+    axes[1,0].set_xlabel('Generations')
+    axes[1,0].set_title('Population Size 18')
+    axes[0,1].set_ylabel('Number of Neurons')
+    axes[0,1].set_xlabel('Generations')
+    axes[0,1].set_title('Population Size 12')
+    axes[1,1].set_ylabel('Number of Neurons')
+    axes[1,1].set_xlabel('Generations')
+    axes[1,1].set_title('Population Size 24')
     
     
 #def plot_swarm(population):

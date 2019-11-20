@@ -48,16 +48,20 @@ class NeuralNetwork:
         self.prunedWeights_h= []
         self.accuracyTrain_h_iteration = []
         self.activationFunctions_hh = []
+        self.layersSize = len(self.layers)
+        self.layers_h = []
 
         
 
 
     def add(self,index, layer): # add layer to NN
         self.layers.insert(index,layer)
+        self.layersSize += 1
 
 
     def rmv(self, layer):
         self.layers.remove(layer)
+        self.layersSize -= 1
 
     def getNrNeurons(self): #calculates nr of neurons without input and outputlayer, cause is anyway in every NN the same
         #         calculate nr. of neurons
@@ -65,6 +69,7 @@ class NeuralNetwork:
         i = 0
         self.nrNeurons = 0
         self.totalWeights = 0
+        self.layers_h.append(self.layersSize)
         for l in self.layers: # loop over every second element in list
             if i % n == 0: 
                 self.nrNeurons += l.weights.shape[0]
