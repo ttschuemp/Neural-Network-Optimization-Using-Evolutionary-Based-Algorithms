@@ -30,11 +30,11 @@ X = standardize(data.iloc[:,1:])
 data_standardized = pd.concat([data.iloc[:,0], X],axis=1)
 
 # bootstrap in train, vali and test
-data_train, data_vali, data_test = bootstrap(data_standardized, replacement = True) # False
-
+data_train, data_vali, data_test = bootstrap(data_standardized, replacement = False) # default is 60/20/20
+                                                                                     # must be False otherwise test data not unseen data
 # transform y and X in np.array | y: 2=1, 1=0
 #TRAIN
-output = 2
+output = 2 # number of classes
 y_train = transformY(data_train, output)
 X_train = np.asanyarray(data_train.iloc[:,1:])
 

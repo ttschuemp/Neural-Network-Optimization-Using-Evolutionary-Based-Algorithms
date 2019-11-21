@@ -18,6 +18,16 @@ def standardize(data):
         x_standardized = (x - avg)/ std
         data_standardized.iloc[:, j] = x_standardized
         
+def standardize_image(data):
+    r,_ = data.shape
+    data_standardized = data.copy(deep=True)
+    for j in range(r):
+        x = data_standardized.iloc[j,:]
+        avg = x.mean()
+        std = x.std()
+        x_standardized = (x - avg)/ std
+        data_standardized.iloc[j,:] = x_standardized
+        
     return data_standardized
 
 def transformY(data, output):
@@ -29,4 +39,12 @@ def transformY(data, output):
              y[i,1] = 0.99
         if j == 1: 
             y[i,0] = 0.99
+    return y
+
+def transformY_mnist(data, output):
+    n,_ = data.shape
+    y = np.zeros((n,output))+0.01
+    for i in range(n):
+        j = int(data.iloc[i,0])
+        y[i,j] = 0.99
     return y

@@ -44,7 +44,8 @@ def mseDerivative(y, yEst):
     return 2*(yEst-y)/m;
 
 def crossEntropy(y, yEst):
-    return  - np.sum(y*np.log(yEst),axis =0)
+    eps = 1e-5 
+    return  - np.sum(y*np.log(yEst+eps),axis =0)
 
 def crossEntropyDerivative(y, yEst):
     m = y.shape[0]

@@ -11,7 +11,7 @@ class Layer(Layers):
         self.bias = np.random.randn(1, outputSize) * 0.1
         self.totalWeights_layer = inputSize * outputSize
         # Adam
-        self.alpha = 0.001 # stepsize # needs to be tuned!! # default 0.001
+        self.alpha = 0.0001 # 0.001 (wholesale) ********
         self.beta1 = 0.9 # Exponential decay rates for the moment estimates
         self.beta2 = 0.999
         self.epsilon =1e-8

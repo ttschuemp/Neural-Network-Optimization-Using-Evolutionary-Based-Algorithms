@@ -6,9 +6,16 @@ import matplotlib.pyplot as plt
 plt.style.use("seaborn-whitegrid")
 import pandas as pd
 from EvolutionaryAlgorithm import EvolutionaryAlgorithm
-from NSGAII import NSGAII
-from support.Bootstrap import bootstrap
 import numpy as np 
+from NeuralNetwork import NeuralNetwork
+from support.Layer import Layer
+from support.ActivationLayer import ActivationLayer
+from support.Functions import tanh, tanhDerivative, sigmoid, sigmoidDerivative, mse, \
+mseDerivative, relu, reluDerivative, softmax, softmaxDerivative, crossEntropy, crossEntropyDerivative
+from support.Bootstrap import bootstrap, standardize, transformY_mnist
+from EvolutionaryAlgorithm import EvolutionaryAlgorithm
+from NSGAII import NSGAII
+from support.plotting_helper import plot_objectives, plot_IterationSGD, plot_testAcc, plot_exploration
 
 
 #----------------------------------------------------------------------------------
@@ -45,18 +52,22 @@ Y = dfTrain_np[:,784:]
 X_vali = dfvalidation_np[:,0:784]
 Y_vali = dfvalidation_np[:,784:]
 
-##
+NeuralNetwork.maxNeurons = 300 
+NeuralNetwork.minNeurons = 50 
+NeuralNetwork.maxHiddenLayers = 4
+NeuralNetwork.sizeInput = 784
+NeuralNetwork.sizeOutput = 10
 
 
 ## initialize ##
 EA = EvolutionaryAlgorithm(xTrain = X, yTrain = Y, 
-                           popSize = 20, xTest = X_vali, yTest = Y_vali)
+                           popSize = 10)
 
 
 colours = ['bo', 'gx', 'r*', 'cv', 'm1', 'y2', 'k3', 'w4']
 
 # random initial population
-initialPopulation = EA.randomPop()
+initialPopulation = EA.randomPop(loss = crossEntropy, lossDerivative = crossEntropyDerivative)
 nsga = NSGAII()
 
 population = initialPopulation
@@ -79,8 +90,8 @@ for i in range(it):
     z = z + 0.02
    
     # predict on validation data set (dont train the weights on this dataset only for hyperparameter adjustment)
-    EA.predPop(offSpring)
-    EA.predPop(population)
+    EA.predPop(offSpring, X = X_vali, Y = Y_vali)
+    EA.predPop(population, X = X_vali, Y = Y_vali)
  
     # evaluation & selection
 #    newPopParent = EA.updatePop(population, offSpring)
