@@ -6,7 +6,7 @@ from support.Evaluation_Selection import fast_nondominated_sort, crowding_distan
 
 
 class NSGAII: 
-    
+
     def run(self, parent, offspring): 
         lenPop = parent.popSize
         combPop = Population(parent.neuralNetworks + offspring.neuralNetworks) # combine the two populations
@@ -31,6 +31,7 @@ class NSGAII:
         newParentList = newParentList[0:lenPop]
         #make new population
         newParentPop = Population(newParentList)
+            
         return newParentPop
 
             

@@ -6,7 +6,7 @@ import random
 
 from support.Layer import Layer
 from support.Parameters import randomActivationLayer
-from NeuralNetwork import NeuralNetwork
+from NeuralNetwork_Batch import NeuralNetwork
 
 # switch like statement
 

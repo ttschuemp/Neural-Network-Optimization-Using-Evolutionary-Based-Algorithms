@@ -7,12 +7,12 @@ from support.Layer import Layer
 from support.Functions import tanh, tanhDerivative, sigmoid, sigmoidDerivative, mse, \
 mseDerivative, relu, reluDerivative, softmax, softmaxDerivative, crossEntropy, crossEntropyDerivative
 from support.ActivationLayer import ActivationLayer
-from NeuralNetwork import NeuralNetwork
+from NeuralNetwork_Batch import NeuralNetwork
 
 
 
 def randomActivationLayer(): # gives random a ActivationLayer with sigmoid or tanh
-    b = np.random.randint(3) # toss a coin what activation layer
+    b = np.random.randint(2,3) # 3
     if b == 0:
         activationLayer = ActivationLayer(sigmoid, sigmoidDerivative)
     elif b ==1:

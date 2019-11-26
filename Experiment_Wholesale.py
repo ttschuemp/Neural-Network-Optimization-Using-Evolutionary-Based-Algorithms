@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 plt.style.use("seaborn-whitegrid")
 
-from NeuralNetwork import NeuralNetwork
+from NeuralNetwork_Batch import NeuralNetwork
 from support.Layer import Layer
 from support.ActivationLayer import ActivationLayer
 from support.Functions import tanh, tanhDerivative, sigmoid, sigmoidDerivative, mse, \
@@ -14,7 +14,7 @@ mseDerivative, relu, reluDerivative, softmax, softmaxDerivative, crossEntropy, c
 from support.Bootstrap import bootstrap, standardize, transformY
 from EvolutionaryAlgorithm import EvolutionaryAlgorithm
 from NSGAII import NSGAII
-from support.plotting_helper import plot_objectives, plot_IterationSGD, plot_testAcc, plot_exploration
+from support.Plotting_helper import plot_objectives, plot_IterationSGD, plot_testAcc, plot_exploration
 
 
 # Data 
@@ -27,10 +27,11 @@ data = data.drop(["Region"], axis = 1)
 
 # standardize data
 X = standardize(data.iloc[:,1:])
-data_standardized = pd.concat([data.iloc[:,0], X],axis=1)
+data_standardized = pd.concat([data.iloc[:,0], X], axis=1)
 
 # bootstrap in train, vali and test
-data_train, data_vali, data_test = bootstrap(data_standardized, replacement = False) # default is 60/20/20
+data_train, data_vali, data_test = bootstrap(data_standardized,train = 0.7, validation = 0.2, test = 0.1,
+                                             replacement = False) # default is 60/20/20
                                                                                      # must be False otherwise test data not unseen data
 # transform y and X in np.array | y: 2=1, 1=0
 #TRAIN
@@ -48,19 +49,12 @@ X_test = np.asanyarray(data_test.iloc[:,1:])
 
 # initialize 
 
-#static variables in Class NeuralNetwork
-NeuralNetwork.maxNeurons = 40 # 40
-NeuralNetwork.minNeurons = 8 # 8
-NeuralNetwork.maxHiddenLayers = 3 # 3
-NeuralNetwork.sizeInput = 6
-NeuralNetwork.sizeOutput = 2
-
 Populations = []
 EAs = []
 
-for e in [6, 12, 18, 24]:
+for e in [6, 10, 14, 18]: 
     
-    popSize = e  # 12 
+    popSize = e
     it =10 # iterations
     minAcc = 0.8 # makes algorithm much faster!! and more fair comparison! Better convergence
     
@@ -75,11 +69,11 @@ for e in [6, 12, 18, 24]:
     for t in range(it):
         print('** GENERATION',t+1,'**')
         # reproduction and mutation
-        offSpring = EA.makeOffspring(population)
+        offSpring = EA.makeOffspring(population, t)
         
         # train with Adam
-        EA.trainPop(population, epochs = 40, minAcc = minAcc) # 40
-        EA.trainPop(offSpring, epochs = 40, minAcc = minAcc) # 40
+        EA.trainPop(population, epochs = 4, minAcc = minAcc) # 40
+        EA.trainPop(offSpring, epochs = 4, minAcc = minAcc) # 40
         minAcc += 0.03 # 0.04
         
         # evaluate on validation dataset 

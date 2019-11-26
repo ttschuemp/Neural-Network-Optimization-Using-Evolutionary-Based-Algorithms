@@ -2,8 +2,9 @@
 
 import numpy as np 
 
-from NeuralNetwork import NeuralNetwork
+from NeuralNetwork_Batch import NeuralNetwork
 import copy # for making copies of objects 
+
 
 class Population: 
     def __init__(self, neuralNetworks): 
@@ -14,6 +15,7 @@ class Population:
         self.averageErr = float('NAN')
         self.averageNeurons = float('NAN')
         self.averageTop5_err = float('NAN')
+        self.averageNeurons_h = []
 
 
     def add_NN(self, neuralNetwork): 
@@ -36,7 +38,11 @@ class Population:
         a_sorted = np.sort(a,axis =0)[::-1] 
         averageTop5 = np.mean(a_sorted[0:5,:], axis=0)
         return averageTop5
-
+    
+        
+        
+        
+        
         
 #    def evaluatePop(self): 
 #        # in sample
@@ -70,6 +76,7 @@ class Population:
         for n in self.neuralNetworks: 
             totalNeurons += n.getNrNeurons()
             self.averageNeurons = totalNeurons/self.popSize
+            self.averageNeurons_h.append(self.averageNeurons)
             
     def printPop(self): 
         totalOOS = 0.0
@@ -83,7 +90,7 @@ class Population:
 
             
             # average Error over pop.
-            totalErr += n.err[-1]
+            totalErr += n.err
             self.averageErr = totalErr/self.popSize
             totalTrain += n.accuracyTrain
             self.averageAccTrain = totalTrain/self.popSize
@@ -92,7 +99,7 @@ class Population:
             
         print('############# Print Population #################')
         print('Population Size: ',self.popSize)
-        print('Av. Error: {:.2f}'.format(self.averageErr[-1]), 'Av. Neurons: {:.2f}'.format(self.averageNeurons))
+        print('Av. Error: {:.2f}'.format(self.averageErr), 'Av. Neurons: {:.2f}'.format(self.averageNeurons))
         print('Av. Acc. Train: {:.2f}%'.format(self.averageAccTrain*100), 'Av. Acc. Vali: {:.2f}%'.format(100*self.averageAccVali))
         print('------------------------------------------------')
         i = 0

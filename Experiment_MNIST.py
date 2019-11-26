@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 plt.style.use("seaborn-whitegrid")
 
-from NeuralNetwork import NeuralNetwork
+from NeuralNetwork_Batch import NeuralNetwork
 from support.Layer import Layer
 from support.ActivationLayer import ActivationLayer
 from support.Functions import tanh, tanhDerivative, sigmoid, sigmoidDerivative, mse, \
@@ -13,7 +13,7 @@ mseDerivative, relu, reluDerivative, softmax, softmaxDerivative, crossEntropy, c
 from support.Bootstrap import bootstrap, standardize_image, transformY_mnist
 from EvolutionaryAlgorithm import EvolutionaryAlgorithm
 from NSGAII import NSGAII
-from support.plotting_helper import plot_objectives, plot_IterationSGD, plot_testAcc, plot_exploration
+from support.Plotting_helper import plot_objectives, plot_IterationSGD, plot_testAcc, plot_exploration
 
 
 # Data 
@@ -25,8 +25,8 @@ dataPath_test = '/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Py
 # load data
 data_train = pd.read_csv(dataPath_train, sep = ',', header = None, index_col = False)
 data_test = pd.read_csv(dataPath_test, sep = ',', header = None, index_col = False)
-data_train = data_train.iloc[0:2000,:]
-data_test = data_test.iloc[0:500,:]
+data_train = data_train.iloc[0:5000,:]
+data_test = data_test.iloc[0:1000,:]
 
 # standardize data
 X = standardize_image(data_train.iloc[:,1:])
@@ -37,6 +37,9 @@ data_test_standardized = pd.concat([data_test.iloc[:,0], X],axis = 1)
 # bootstrap in train, vali and test
 _, data_vali, data_test = bootstrap(data_test_standardized, train = 0.0, validation = 0.5, test = 0.5, replacement = False) # default is 60/20/20
 data_train = data_train_standardized
+
+## bootstrap in train, vali and test
+#data_train, data_vali, data_test = bootstrap(data_train_standardized, train = 0.6, validation = 0.2, test = 0.2, replacement = False) # default is 60/20/20
 
 # transform y and X in np.array 
 #TRAIN
@@ -54,54 +57,47 @@ X_test = np.asanyarray(data_test.iloc[:,1:])
 
 # initialize 
 
-#static variables in Class NeuralNetwork
-NeuralNetwork.maxNeurons = 400 
-NeuralNetwork.minNeurons = 30 
-NeuralNetwork.maxHiddenLayers = 4
-NeuralNetwork.sizeInput = 784
-NeuralNetwork.sizeOutput = 10
-
 Populations = []
 EAs = []
 
-#for e in [6, 12, 18, 24]:
+for e in [6, 10, 14, 18]: 
     
-popSize = 6  # e 
-it =10 # iterations
-minAcc = 0.9 # makes algorithm much faster!! and more fair comparison! Better convergence
-
-EA = EvolutionaryAlgorithm(xTrain = X_train, yTrain = y_train, 
-                       popSize = popSize)
-NSGA = NSGAII()
-
-initialPopulation = EA.randomPop(loss = crossEntropy, lossDerivative = crossEntropyDerivative) # random population
-# main loop
-population = initialPopulation
-
-for t in range(it):
-    print('** GENERATION',t+1,'**')
-    # reproduction and mutation
-    offSpring = EA.makeOffspring(population)
-
-    # train with Adam
-    EA.trainPop(population, epochs = 15, minAcc = minAcc) 
-    EA.trainPop(offSpring, epochs = 15, minAcc = minAcc) 
-    minAcc += 0.02 
+    popSize = e  # e 
+    it =10 # iterations
+    minAcc = 0.9 # makes algorithm much faster!! and more fair comparison! Better convergence
     
-    # evaluate on validation dataset 
-    EA.predPop(offSpring, X = X_vali, Y = y_vali)
-    EA.predPop(population, X = X_vali, Y = y_vali)
- 
-    # selection
-    newPopParent = NSGA.run(population, offSpring)
-    # get the test accuracy (only for plotting)
-    EA.predPop(newPopParent, X = X_test, Y = y_test, testSample = True)
-    newPopParent.printPop()
-
-    population = newPopParent
+    EA = EvolutionaryAlgorithm(xTrain = X_train, yTrain = y_train, 
+                           popSize = popSize)
+    NSGA = NSGAII()
     
-Populations.append(population)
-EAs.append(EA)
+    initialPopulation = EA.randomPop(loss = crossEntropy, lossDerivative = crossEntropyDerivative) # random population
+    # main loop
+    population = initialPopulation
+    
+    for t in range(it):
+        print('** GENERATION',t+1,'**')
+        # reproduction and mutation
+        offSpring = EA.makeOffspring(population, t)
+    
+        # train with Adam
+        EA.trainPop(population, epochs = 8, minAcc = minAcc, batchSize =10) 
+        EA.trainPop(offSpring, epochs = 8, minAcc = minAcc, batchSize = 10) 
+        minAcc += 0.02 
+        
+        # evaluate on validation dataset 
+        EA.predPop(offSpring, X = X_vali, Y = y_vali)
+        EA.predPop(population, X = X_vali, Y = y_vali)
+     
+        # selection
+        newPopParent = NSGA.run(population, offSpring)
+        # get the test accuracy (only for plotting)
+        EA.predPop(newPopParent, X = X_test, Y = y_test, testSample = True)
+        newPopParent.printPop()
+    
+        population = newPopParent
+        
+    Populations.append(population)
+    EAs.append(EA)
     
 #plot_swarm(population)
 #plt.show()
@@ -122,9 +118,26 @@ plt.show()
 #    print("Python version in use: ", sys.version)
 #    print("Experiment_Wholesale")
 #    print("##########-##########-##########")
-#    Wholesale_EA()
+#    MNIST_EA()
 #    print("##########-##########-##########")
 
+# initialize NN
+#inputLayer = Layer(784,400)
+#activationFunction = ActivationLayer(relu, reluDerivative)
+#hiddenLayer = Layer(400, 300)
+#activationFunction2 = ActivationLayer(relu, reluDerivative)
+#hiddenLayer2 = Layer(300, 200)
+#activationFunction3 = ActivationLayer(relu, reluDerivative)
+#outputLayer = Layer(200, 10)
+#activationFunction4 = ActivationLayer(softmax, softmaxDerivative)
+#
+#
+#layerList = [inputLayer, activationFunction, hiddenLayer, activationFunction2,hiddenLayer2,activationFunction3, outputLayer, activationFunction4]
+#
+#nn = NeuralNetwork(layerList, crossEntropy, crossEntropyDerivative)
+#
+#nn.train(X_train, y_train, epochs= 2, batchSize = 100)
+#h=nn.predict(X_test, y_test)
 
 
 #

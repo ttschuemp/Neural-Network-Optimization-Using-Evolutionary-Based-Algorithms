@@ -1,4 +1,4 @@
-# NeuralNetwork.py
+# NeuralNetwork_Batch.py
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -8,15 +8,29 @@ from support.Functions import tanh, tanhDerivative, sigmoid, sigmoidDerivative, 
 mseDerivative, relu, reluDerivative, softmax, softmaxDerivative, crossEntropy, crossEntropyDerivative
 
 
-
-
 class NeuralNetwork:
+    
     #static variables 
-    maxNeurons = 0
-    minNeurons = 0
-    maxHiddenLayers = 0
-    sizeInput = 0
-    sizeOutput = 0
+    ## *** MNIST ***
+#    maxNeurons = 400 
+#    minNeurons = 30 
+#    maxHiddenLayers = 4
+#    sizeInput = 784 
+#    sizeOutput = 10 
+    
+     ## *** Wholesale ***
+#    maxNeurons = 40
+#    minNeurons = 8
+#    maxHiddenLayers = 3
+#    sizeInput = 6
+#    sizeOutput = 2
+     
+    ## *** AD ***
+    maxNeurons = 20 #15
+    minNeurons = 3
+    maxHiddenLayers = 3 #3
+    sizeInput = 2
+    sizeOutput = 2
     
     def __init__(self, layerList, loss = crossEntropy, lossDerivative = crossEntropyDerivative):
         self.layers = layerList
@@ -26,7 +40,7 @@ class NeuralNetwork:
         self.accuracyTrain = float('NAN')
         self.accuracyVali = float('NAN')
         self.accuracyTest = float('NAN')
-        self.err = [] 
+        self.err = float('NAN')
         self.prunedWeights = 0
         self.nrNeurons =  0
         self.trainingIterations = 0
@@ -50,6 +64,7 @@ class NeuralNetwork:
         self.activationFunctions_hh = []
         self.layersSize = len(self.layers)
         self.layers_h = []
+        self.accuracyTrain_h_batch = []
 
         
 
@@ -75,7 +90,8 @@ class NeuralNetwork:
                 self.nrNeurons += l.weights.shape[0]
                 self.totalWeights += l.totalWeights_layer
             i += 1
-        return self.nrNeurons + NeuralNetwork.sizeOutput
+        self.nrNeurons = self.nrNeurons + NeuralNetwork.sizeOutput-self.layers[-2].weights.shape[0]
+        return self.nrNeurons
     
     
     def getNrPrunedWeights(self):
@@ -117,90 +133,74 @@ class NeuralNetwork:
 #        target = target[:,None] # fix second dimension of vector
         r,d = target.shape
         row ,col = inputs.shape
-        scorecardVali = []
+        scorecardVali = np.zeros(r)*np.nan
         estimation = np.zeros((r,d))*np.nan
 
         # run network over all samples
-        for i in range(row):
-            output = inputs[i] # forward propagation
+        for i in range(0,r,self.batchSize):
+            output = inputs[i:i+self.batchSize,:] # forward propagation
 #            output = output[:,None] # fix second dimension of vector
 #            output = output.T
             for l in self.layers:
                 output = l.forwardPropagation(output)
-            estimation[i]= output
-            if (np.argmax(output)== np.argmax(target[i])):
-                scorecardVali.append(1)
-            else: 
-                scorecardVali.append(0)
-        scorecard_arrayVali = np.asarray(scorecardVali)
+            estimation[i:i+self.batchSize]= output
+            scorecardVali[i:i+self.batchSize] = np.argmax(target[i:i+self.batchSize,:], axis = 1) == np.argmax(output, axis = 1) 
         if testSample == True: 
-            self.accuracyTest = scorecard_arrayVali.sum() /scorecard_arrayVali.size
+            self.accuracyTest = scorecardVali.sum() /scorecardVali.size
         else:
-            self.accuracyVali = scorecard_arrayVali.sum() /scorecard_arrayVali.size
+            self.accuracyVali = scorecardVali.sum() /scorecardVali.size
     
         return estimation 
-#            print("YHat:", np.argmax(output))
-#            self.result.append(output)
-#            if (np.argmax(output)== np.argmax(targets[i])):
-#                scorecardOOS.append(1)
-#            else: 
-#                scorecardOOS.append(0)
-#                pass
-#        scorecard_arrayOOS = np.asarray(scorecardOOS)
-#        self.accuracyOOS = scorecard_arrayOOS.sum() /scorecard_arrayOOS.size
-##        print ("accuracyOOS = ", self.accuracyOOS)
 
 
-    # train the network
-    def train(self, xTrain, yTrain, epochs, minAcc = 1.0):
+
+    def train(self, xTrain, yTrain, epochs, minAcc = 1.0, batchSize = 1):
         self.nrNeurons =  self.getNrNeurons()
+        self.nrNeurons_h.append(self.nrNeurons)
         self.prunedWeights = self.getNrPrunedWeights()
         r, d = xTrain.shape # sample dimension first
+        self.batchSize = batchSize
         # training loop
         for i in range(epochs):
             err = 0
-            scorecardTrain = []
-            for j in range(r): # for all samples
-                output = xTrain[j] # forward propagation, one sample 
-                output = np.reshape(output,(1, d))
+            scorecardTrain = np.zeros(r)*np.nan
+            t = 1
+            for j in range(0,r,batchSize): # for all samples
+                output = xTrain[j:j+batchSize,:] # forward propagation, a batch of samples 
+#                output = np.reshape(output,(1, d))
                 for l in self.layers:
                     output = l.forwardPropagation(output) # output for each row of the training data
 
-                # compute loss (for display purpose only)
-                err = err + self.loss(yTrain[j], output) # compare the output of each row with the target of this row/sample
-##                    print("error", self.err)
-##                    print("Y:", np.argmax(yTrain[j]),"YHat:", np.argmax(output))
-                if (np.argmax(yTrain[j]) == np.argmax(output)): # append correct or incorrect to list
-#                     # network's answer matches correct answer, add 1 to scorecard
-                     scorecardTrain.append(1)
-                else:
-                     # network's answer doesn't match correct answer, add 0 to scorecard
-                     scorecardTrain.append(0)
+                # compute loss only for display
+                err = err + self.loss(yTrain[j:j+batchSize,:], output) # compare the output of each row with the target of this row/sample
+
+                scorecardTrain[j:j+batchSize] = np.argmax(yTrain[j:j+batchSize,:], axis = 1) == np.argmax(output, axis = 1) 
 
                 # backward propagation
-                error = self.lossDerivative(yTrain[j], output) # wholesale example output is 1x3 and target is 1x3
+                error = self.lossDerivative(yTrain[j:j+batchSize,:], output) # wholesale example output is 1x3 and target is 1x3
 #                    print("error BP:", error)
                 for l in reversed(self.layers):     # Error is in example e 1x3 matrix/vector
                     error = l.backwardPropagation(error)
+                if t%10==0: # check every 10 batches if trained until minAcc
+                    Acc=scorecardTrain[0:(batchSize*t-1)].sum()/(batchSize*t)
+                    self.accuracyTrain_h_batch.append(Acc)
+                    if Acc > minAcc:
+                        break
+                t+=1
             # calculate average error on all samples
             # for plotting only
-            err /= r 
-            self.err.append(err)
-            err_ = np.sum(err)/err.shape[0]
-            self.err_h.append(err_)
-#                print("av error: ", err)
-#            self.learningRate *= self.decreaseLR
-            
-            scorecard_arrayTrain = np.asarray(scorecardTrain)
-            self.accuracyTrain = scorecard_arrayTrain.sum() /scorecard_arrayTrain.size
+            self.err /= r 
+#            err_ = np.sum(err)/err.shape[0]
+            self.err_h.append(err)
+
+
+            self.accuracyTrain = scorecardTrain[0:(batchSize*t-1)].sum()/(batchSize*t)
             self.accuracyTrain_h_iteration.append(self.accuracyTrain)
             self.trainingIterations += 1
             if self.accuracyTrain > minAcc:
                 break
 
             
-#            plt.plot(range(epochs), self.err, markersize=3)
-#            plt.show()
 
 
 

@@ -22,7 +22,7 @@ def sigmoidDerivative(x):
 
 def softmax(x):
     x = np.clip(x, -600, 600 )
-    return np.exp(x) / np.sum(np.exp(x), axis=1)
+    return np.exp(x) / np.sum(np.exp(x), axis=1).reshape(-1,1)
 
 def softmaxDerivative(x):
     S = softmax(x)
@@ -45,9 +45,9 @@ def mseDerivative(y, yEst):
 
 def crossEntropy(y, yEst):
     eps = 1e-5 
-    return  - np.sum(y*np.log(yEst+eps),axis =0)
+    return  - np.sum(y*np.log(yEst+eps), axis =1)
 
 def crossEntropyDerivative(y, yEst):
     m = y.shape[0]
-    c = np.sum(yEst - y, axis = 0)
+    c = np.sum(yEst - y, axis = 0) 
     return c/m

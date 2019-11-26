@@ -7,11 +7,11 @@ class Layer(Layers):
 
     def __init__(self, inputSize, outputSize):
 #        np.random.seed(2)
-        self.weights = np.random.randn(inputSize, outputSize) * 0.1 # * 0.01 keep initial weights small
+        self.weights = np.random.randn(inputSize, outputSize) * 0.1 # keep initial weights small
         self.bias = np.random.randn(1, outputSize) * 0.1
         self.totalWeights_layer = inputSize * outputSize
         # Adam
-        self.alpha = 0.0001 # 0.001 (wholesale) ********
+        self.alpha = 0.001 
         self.beta1 = 0.9 # Exponential decay rates for the moment estimates
         self.beta2 = 0.999
         self.epsilon =1e-8
@@ -20,31 +20,11 @@ class Layer(Layers):
         self.mb = 0 # first moment vector (bais)
         self.vb = 0 # second moment vector (bais)
         self.t = 0 # time step
-#        # momentum
-#        self.mu = 0.9 # momentum constant, anneal up not down!
-#        self.velocity_old = np.zeros((inputSize, outputSize)) # store moving average of the gradients
-##        #Rprop 
-##        self.Nminus = 0.5# bounds form Rprop 0 < Nminus < 1 < Nplus
-##        self.Nplus = 1.5# bounds from Rprop
-##        self.deltaW = np.zeros((inputSize, outputSize)) + 0.05 # initial value of delta 
-##        self.deltaB = np.zeros((1, outputSize)) + 0.05 # initial value of delta 
-##        self.weightsError_old = np.zeros((inputSize, outputSize)) # initial value
-##        self.outputError_old = np.zeros((1, outputSize)) # initial value 
-##        self.deltaMaxB = np.zeros((1, outputSize))+ 1 # 50 
-##        self.deltaMinB = np.zeros((1, outputSize)) + 0.0
-##        self.deltaMaxW = np.zeros((inputSize, outputSize))+ 1 # 50 
-##        self.deltaMinW = np.zeros((inputSize, outputSize)) + 0.0
-##        # QuickPro
-##        self.weightsE_old = np.ones((inputSize, outputSize))-0.5
-##        self.dw_old = np.random.uniform(-0.1, 0.1, size=(1, outputSize))
 
-
-    
     def changeSize(self, layer, inputSize, outputSize):
         layer.weights = np.random.randn(inputSize, outputSize) * 0.1
         layer.bias = np.random.randn(1, outputSize) * 0.1
 
-    
     def jitterWeights(self): # gaussian noise to each weight with prob 0.3, x dist-> N(0, 0.01)
         numrows, numcols = self.weights.shape
         prob = 0.3

@@ -1,4 +1,4 @@
-#plotting_helper.py
+#Plotting_helper.py
 
 import numpy as np
 import seaborn as sns
@@ -16,7 +16,7 @@ colours =['#393b79','#5254a3', '#6b6ecf', '#9c9ede', '#637939', '#8ca252', '#b5c
 
 
 def plot_objectives(Populations): 
-    fig1, axes = plt.subplots(2,2, figsize=(10,5))
+    fig1, axes = plt.subplots(2,2, figsize=(12.4,6.2))
     j = 0
     for p in Populations:
         for n in p.neuralNetworks:
@@ -49,10 +49,14 @@ def plot_objectives(Populations):
     axes[1,1].set_ylabel('Number of Neurons')
     axes[1,1].set_xlabel('Accuracy Test Set')
     axes[1,1].set_title('Population Size 24')
+    axes[0,0].set_xlim([0.85,0.95])
+    axes[0,1].set_xlim([0.85,0.95])
+    axes[1,0].set_xlim([0.85,0.95])
+    axes[1,1].set_xlim([0.85,0.95])
     plt.show()
 
 def plot_IterationSGD(Populations): 
-    fig2, axes = plt.subplots(2,2, figsize=(10,5))
+    fig2, axes = plt.subplots(2,2, figsize=(12.4,6.2))
     j = 0
     for p in Populations:
         for n in p.neuralNetworks:
@@ -92,7 +96,7 @@ def plot_IterationSGD(Populations):
 # different population size 
 
 def plot_testAcc(Populations):
-    fig3, axes = plt.subplots(2,2, figsize=(10,5))
+    fig3, axes = plt.subplots(2,2, figsize=(12.4,6.2))
     j = 0
     for p in Populations:
         for n in p.neuralNetworks:
@@ -145,7 +149,7 @@ def plot_testAcc(Populations):
         
             
 def plot_exploration(EAs, it): 
-    fig4, axes = plt.subplots(2,2, figsize=(10,5))
+    fig4, axes = plt.subplots(2,2, figsize=(12.4,6.2))
     j=0
     for ea in EAs: 
         array= np.asarray(ea.exp_nrNeurons_h)
@@ -175,6 +179,59 @@ def plot_exploration(EAs, it):
     axes[1,1].set_title('Population Size 24')
     
     
+
+    
+def plot_AD(Populations, it):
+    fig5, axes = plt.subplots(1,2, figsize=(12.4,6.2))
+    generation = range(1,it+1)
+    a = []
+    for p in Populations:
+        for n in p.neuralNetworks:
+            u = (np.random.rand()-0.5)*2
+            array= np.asarray(n.nrNeurons_h)
+            axes[0].plot(generation, array+u, color= 'midnightblue',alpha = 0.13)
+            d=int(len(n.nrNeurons_h))
+            a += n.nrNeurons_h
+    a = np.asarray(a)
+    a = np.reshape(a,(18*len(Populations),d))
+    average = np.mean(a, axis=0)
+    axes[0].plot(generation, average, color= 'midnightblue', linewidth=3)
+    b=np.zeros(len(a)) *np.nan
+    for i in range(len(a)):
+        b[i]=a[i,-1]
+    axes[1].hist(b, bins = 6, color = 'midnightblue', alpha = 0.9, density=True)
+    bmean = np.mean(b)
+    print(bmean)
+    bstd = np.std(b)
+    print(bstd)
+    bmedian = np.median(b)
+    print(bmedian)
+    quantil= np.quantile(b, [0.1, 0.2, 0.05])
+    print(quantil)
+    axes[0].set_ylabel('Number of Neurons')
+    axes[0].set_xlabel('Generations')
+    axes[1].set_xlabel('Number of Neurons')
+    axes[1].set_ylabel('Probability Density')
+    
+
+#mean = 11.122222222222222
+#std = 5.929826262730877
+#median = 9.0
+#[8. 8.]
+
+
+#15.177777777777777
+#1.5533317437601148
+#15.0
+
+# TRUE DGP 12 neurons
+#17.283333333333335
+#3.251110921242495
+#17.0
+#    0.1 0.2 0.05
+#[12.9 14.  12. ]
+    
+    
 #def plot_swarm(population):
 #    fig5, axes = plt.subplots(2,2, figsize=(10,5))
 #    u=0
@@ -191,8 +248,12 @@ def plot_exploration(EAs, it):
     
     
     
-    
-    
+    i = 0
+    for p in Populations:
+        for n in p.neuralNetworks:
+            print(n.nrNeurons)
+            print(i)
+        i+=1
     
     
     
