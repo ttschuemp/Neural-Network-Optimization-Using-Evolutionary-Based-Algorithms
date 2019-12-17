@@ -2,6 +2,7 @@
 
 import numpy as np 
 import random
+import math
 
 
 from support.Layer import Layer
@@ -11,10 +12,10 @@ from NeuralNetwork_Batch import NeuralNetwork
 # switch like statement
 
 
-def addLayer(neuralNetwork): # adds layer with XY neurons to last layer (inputlayer)
+def addLayer(neuralNetwork): # adds layer V_* with XY neurons to last layer (inputlayer V_*) {V_0 , V_*, V_1}
     
     # network already > max Hidden layers ?
-    if len(neuralNetwork.layers) >= (4 + NeuralNetwork.maxHiddenLayers*2): # cause 4 is a network with no hidden layer
+    if len(neuralNetwork.layers) >= (4 + (NeuralNetwork.maxHiddenLayers-1)*2): # cause 4 is a network with one hidden layer
         return
 #        ¨¨ranInt = np.random.randint(1,5) # random int 2-4
 #        mutationAction(ranInt ,neuralNetwork)
@@ -51,7 +52,7 @@ def addLayer(neuralNetwork): # adds layer with XY neurons to last layer (inputla
 def rmvLayer(neuralNetwork): # removes random a hidden layer, hidden layers closer to input layer have higher prob to be rmved
     # Network to small ? one hidden layer is the minimal structure
     leng = len(neuralNetwork.layers)
-    if leng <= 6:
+    if leng <= 4: # 4 is min sturcture of network (single hidden layer)
         return
 #        ranInt = np.random.randint(1,5)
 #        mutationAction(ranInt ,neuralNetwork)
@@ -95,8 +96,8 @@ def jitterNN(neuralNetwork):
 
 def pruning(neuralNetwork): # delete the smalest 1 %  exept for output layer
     nrNeurons = neuralNetwork.getNrNeurons()
-    prunFaktor = 0.01 # 0.1 (wholesale)****
-    nrPruns = round(nrNeurons * prunFaktor)
+    prunFaktor = 0.1 # 0.1 (wholesale)**** # 0.01 (MNIST)****
+    nrPruns = math.ceil(nrNeurons * prunFaktor)
     n = 2 # iterate over every second element
     i = 0 
     deleted = 0
@@ -112,7 +113,7 @@ def pruning(neuralNetwork): # delete the smalest 1 %  exept for output layer
     
 def changeAL(neuralNetwork):
     lenLayers = len(neuralNetwork.layers)
-    prob = 0.5 #0.8 (wholesale)*****
+    prob = 0.8 #0.8 (wholesale)***** #0.5 (MNIST)*****
     index = np.random.rand(1, lenLayers) < prob
     for i in range(0, lenLayers, 2):
         index[0,i] = False # exclude all weight layers

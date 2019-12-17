@@ -115,7 +115,8 @@ class Population:
             pweights = n.getNrPrunedWeights()
 #            print('Connections: {:.1f}%'.format(100-pweights/(n.totalWeights)*100))
             print('AF: ', n.activationFunctions)
-            print('Hidden Layers: ', int((len(n.layers)- 4) /2))
+            print('Hidden Layers: ', int((len(n.layers) /2 -2 +1)))
+            n.layers_h_generation.append(int((len(n.layers) /2 -2 +1)))
             print('------------------------------------------------')
             i +=1
         print('####################################################')

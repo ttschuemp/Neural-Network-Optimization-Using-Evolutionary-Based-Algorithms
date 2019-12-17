@@ -22,10 +22,10 @@ class EvolutionaryAlgorithm:
 
         
         
-    def randomPop(self, loss, lossDerivative, noHiddenLayers= False):
+    def randomPop(self, loss, lossDerivative):
         NNlist = []
         for i in range(self.popSize):
-            randomLayers = initializeParameters(noHiddenLayers=noHiddenLayers)
+            randomLayers = initializeParameters()
             nn = NeuralNetwork(randomLayers, loss= loss , lossDerivative = lossDerivative)
             NNlist.append(nn)
             pass

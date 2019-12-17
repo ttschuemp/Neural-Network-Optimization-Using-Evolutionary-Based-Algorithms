@@ -30,7 +30,7 @@ X = standardize(data.iloc[:,1:])
 data_standardized = pd.concat([data.iloc[:,0], X], axis=1)
 
 # bootstrap in train, vali and test
-data_train, data_vali, data_test = bootstrap(data_standardized,train = 0.7, validation = 0.2, test = 0.1,
+data_train, data_vali, data_test = bootstrap(data_standardized,train = 0.6, validation = 0.2, test = 0.2,
                                              replacement = False) # default is 60/20/20
                                                                                      # must be False otherwise test data not unseen data
 # transform y and X in np.array | y: 2=1, 1=0
@@ -55,7 +55,7 @@ EAs = []
 for e in [6, 10, 14, 18]: 
     
     popSize = e
-    it =10 # iterations
+    it = 10 # iterations
     minAcc = 0.8 # makes algorithm much faster!! and more fair comparison! Better convergence
     
     EA = EvolutionaryAlgorithm(xTrain = X_train, yTrain = y_train, 
@@ -72,9 +72,9 @@ for e in [6, 10, 14, 18]:
         offSpring = EA.makeOffspring(population, t)
         
         # train with Adam
-        EA.trainPop(population, epochs = 4, minAcc = minAcc) # 40
-        EA.trainPop(offSpring, epochs = 4, minAcc = minAcc) # 40
-        minAcc += 0.03 # 0.04
+        EA.trainPop(population, epochs = 40, minAcc = minAcc) # 40
+        EA.trainPop(offSpring, epochs = 40, minAcc = minAcc) # 40
+        minAcc += 0.04 
         
         # evaluate on validation dataset 
         EA.predPop(offSpring, X = X_vali, Y = y_vali)

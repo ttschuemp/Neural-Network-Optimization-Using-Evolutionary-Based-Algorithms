@@ -36,22 +36,25 @@ y_test = transformY_ad(y_test_,2)
 #    ax.set_facecolor((1.0, 0.47, 0.42))
 #    plt.show()
 
-# define neural network
-inputLayer = Layer(2, 8)
-activationFunction = ActivationLayer(relu, reluDerivative)
-hiddenLayer = Layer(8, 8)
-activationFunction2 = ActivationLayer(relu, reluDerivative)
-outputLayer = Layer(8, 2)
-activationFunction4 = ActivationLayer(softmax, softmaxDerivative)
+# define neural network (with one hidden layer)
 
-layerList = [inputLayer, activationFunction, hiddenLayer, activationFunction2, outputLayer, activationFunction4]
+input_D = 2
+H = 6
+output_D = 2
+
+inputLayer = Layer(input_D, H)
+af = ActivationLayer(relu, reluDerivative)
+outputLayer = Layer(H, output_D)
+af2 = ActivationLayer(softmax, softmaxDerivative)
+
+layerList = [inputLayer, af, outputLayer, af2]
 nn = NeuralNetwork(layerList, crossEntropy, crossEntropyDerivative)
 
 # train, test
 nn.train(X_train, y_train, epochs = 600) 
 pred = nn.predict(X_test, y_test, testSample = True)
 
-# simulate data with these trained parameters (true DGP)
+# simulate data with these trained parameters (true DGP -> hiddenlayer=1, neurons=10)
 d = 2
 n = 1500
 artificialData_X = (np.random.rand(n, d)-0.5)*2
@@ -77,7 +80,7 @@ Populations = []
 EAs = []
 popSize = 18
 it = 10 # iterations
-minAcc = 0.9 # makes algorithm much faster!! and more fair comparison! Better convergence
+minAcc = 0.9 # makes algorithm much faster!! and more fair comparison!
 
 for e in range(10): # 10 experiments
     
@@ -87,16 +90,15 @@ for e in range(10): # 10 experiments
     initialPopulation = EA.randomPop(loss = crossEntropy, lossDerivative = crossEntropyDerivative) # random population
     # main loop
     population = initialPopulation
-    
     for t in range(it):
         print('** GENERATION',t+1,'**')
         # reproduction and mutation
         offSpring = EA.makeOffspring(population, t-4)
         
         # train with Adam
-        EA.trainPop(population, epochs = 2, minAcc = minAcc) 
-        EA.trainPop(offSpring, epochs = 2, minAcc = minAcc) 
-        minAcc += 0.01 
+        EA.trainPop(population, epochs = 3, minAcc = minAcc) 
+        EA.trainPop(offSpring, epochs = 3, minAcc = minAcc) 
+        minAcc += 0.02 #0.01 
         
         # evaluate on validation dataset 
         EA.predPop(offSpring, X = X_vali, Y = y_vali)
@@ -113,21 +115,6 @@ for e in range(10): # 10 experiments
     Populations.append(population)
     EAs.append(EA)
     
-        
-#plot_swarm(population)
-#plt.show()
-        
-plot_objectives(Populations)
-plt.show()
-    
-plot_IterationSGD(Populations)
-plt.show()
-    
-plot_testAcc(Populations)
-plt.show()
-        
-plot_exploration(EAs, it)
-plt.show()
 
 plot_AD(Populations, it)
 plt.show()

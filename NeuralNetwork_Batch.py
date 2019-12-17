@@ -11,14 +11,14 @@ mseDerivative, relu, reluDerivative, softmax, softmaxDerivative, crossEntropy, c
 class NeuralNetwork:
     
     #static variables 
-    ## *** MNIST ***
+#    # *** MNIST ***
 #    maxNeurons = 400 
 #    minNeurons = 30 
 #    maxHiddenLayers = 4
 #    sizeInput = 784 
 #    sizeOutput = 10 
     
-     ## *** Wholesale ***
+#     ## *** Wholesale ***
 #    maxNeurons = 40
 #    minNeurons = 8
 #    maxHiddenLayers = 3
@@ -26,9 +26,9 @@ class NeuralNetwork:
 #    sizeOutput = 2
      
     ## *** AD ***
-    maxNeurons = 20 #15
-    minNeurons = 3
-    maxHiddenLayers = 3 #3
+    maxNeurons = 20
+    minNeurons = 2 
+    maxHiddenLayers = 3
     sizeInput = 2
     sizeOutput = 2
     
@@ -62,8 +62,8 @@ class NeuralNetwork:
         self.prunedWeights_h= []
         self.accuracyTrain_h_iteration = []
         self.activationFunctions_hh = []
-        self.layersSize = len(self.layers)
         self.layers_h = []
+        self.layers_h_generation = []
         self.accuracyTrain_h_batch = []
 
         
@@ -71,26 +71,24 @@ class NeuralNetwork:
 
     def add(self,index, layer): # add layer to NN
         self.layers.insert(index,layer)
-        self.layersSize += 1
+
 
 
     def rmv(self, layer):
         self.layers.remove(layer)
-        self.layersSize -= 1
+
 
     def getNrNeurons(self): #calculates nr of neurons without input and outputlayer, cause is anyway in every NN the same
         #         calculate nr. of neurons
         n = 2
         i = 0
         self.nrNeurons = 0
-        self.totalWeights = 0
-        self.layers_h.append(self.layersSize)
+        self.layers_h.append((len(self.layers) /2 -2 +1)) 
         for l in self.layers: # loop over every second element in list
             if i % n == 0: 
                 self.nrNeurons += l.weights.shape[0]
-                self.totalWeights += l.totalWeights_layer
             i += 1
-        self.nrNeurons = self.nrNeurons + NeuralNetwork.sizeOutput-self.layers[-2].weights.shape[0]
+        self.nrNeurons = self.nrNeurons + NeuralNetwork.sizeOutput
         return self.nrNeurons
     
     

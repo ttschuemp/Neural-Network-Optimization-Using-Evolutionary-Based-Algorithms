@@ -8,8 +8,7 @@ class Layer(Layers):
     def __init__(self, inputSize, outputSize):
 #        np.random.seed(2)
         self.weights = np.random.randn(inputSize, outputSize) * 0.1 # keep initial weights small
-        self.bias = np.random.randn(1, outputSize) * 0.1
-        self.totalWeights_layer = inputSize * outputSize
+        self.bias = np.random.rand(1, outputSize) * 0.1 # np.random.rand(1, outputSize) *0.1
         # Adam
         self.alpha = 0.001 
         self.beta1 = 0.9 # Exponential decay rates for the moment estimates
