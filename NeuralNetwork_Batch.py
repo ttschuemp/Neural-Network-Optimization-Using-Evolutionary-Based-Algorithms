@@ -17,20 +17,20 @@ class NeuralNetwork:
 #    maxHiddenLayers = 4
 #    sizeInput = 784 
 #    sizeOutput = 10 
-    
-#     ## *** Wholesale ***
-#    maxNeurons = 40
-#    minNeurons = 8
-#    maxHiddenLayers = 3
-#    sizeInput = 6
-#    sizeOutput = 2
-     
-    ## *** AD ***
-    maxNeurons = 20
-    minNeurons = 2 
+#    
+     ## *** Wholesale ***
+    maxNeurons = 40
+    minNeurons = 8
     maxHiddenLayers = 3
-    sizeInput = 2
+    sizeInput = 6
     sizeOutput = 2
+     
+#    ## *** AD ***
+#    maxNeurons = 20
+#    minNeurons = 2 
+#    maxHiddenLayers = 3
+#    sizeInput = 2
+#    sizeOutput = 2
     
     def __init__(self, layerList, loss = crossEntropy, lossDerivative = crossEntropyDerivative):
         self.layers = layerList

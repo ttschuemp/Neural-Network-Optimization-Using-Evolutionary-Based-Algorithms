@@ -29,12 +29,7 @@ X_test = np.load('/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/P
 y_test_ = np.load('/Users/tobiastschuemperlin/Documents/Master WWZ/Masterarbeit/Python/Datasets/test_targets.npy').T
 y_test = transformY_ad(y_test_,2)
 
-#    plt.scatter(X_train[:,0],X_train[:,1], c=np.argmax(y_train,axis = 1))
-#    plt.scatter(X_test[:,0],X_test[:,1], marker='>', c=np.argmax(y_test,axis = 1))
-#    ax = plt.gca()
-#    ax.set_facecolor('xkcd:salmon')
-#    ax.set_facecolor((1.0, 0.47, 0.42))
-#    plt.show()
+
 
 # define neural network (with one hidden layer)
 
@@ -57,7 +52,7 @@ pred = nn.predict(X_test, y_test, testSample = True)
 # simulate data with these trained parameters (true DGP -> hiddenlayer=1, neurons=10)
 d = 2
 n = 1500
-artificialData_X = (np.random.rand(n, d)-0.5)*2
+artificialData_X = (np.random.rand(n, d)-0.5)
 y = np.zeros((n,d)) * np.nan
 artificialData_y = nn.predict(artificialData_X, y)
 
@@ -82,7 +77,7 @@ popSize = 18
 it = 10 # iterations
 minAcc = 0.9 # makes algorithm much faster!! and more fair comparison!
 
-for e in range(10): # 10 experiments
+for e in range(20): # 10 experiments
     
     NSGA = NSGAII()
     EA = EvolutionaryAlgorithm(xTrain = X_train, yTrain = y_train, 
@@ -93,12 +88,12 @@ for e in range(10): # 10 experiments
     for t in range(it):
         print('** GENERATION',t+1,'**')
         # reproduction and mutation
-        offSpring = EA.makeOffspring(population, t-4)
+        offSpring = EA.makeOffspring(population, t-2)
         
         # train with Adam
         EA.trainPop(population, epochs = 3, minAcc = minAcc) 
         EA.trainPop(offSpring, epochs = 3, minAcc = minAcc) 
-        minAcc += 0.02 #0.01 
+        minAcc += 0.02  
         
         # evaluate on validation dataset 
         EA.predPop(offSpring, X = X_vali, Y = y_vali)

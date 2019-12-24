@@ -13,7 +13,7 @@ mseDerivative, relu, reluDerivative, softmax, softmaxDerivative, crossEntropy, c
 from support.Bootstrap import bootstrap, standardize_image, transformY_mnist
 from EvolutionaryAlgorithm import EvolutionaryAlgorithm
 from NSGAII import NSGAII
-from support.Plotting_helper import plot_objectives, plot_IterationSGD, plot_testAcc, plot_exploration
+from support.Plotting_helper import plot_objectives_2, plot_IterationSGD, plot_testAcc, plot_exploration
 
 
 # Data 
@@ -60,7 +60,7 @@ X_test = np.asanyarray(data_test.iloc[:,1:])
 Populations = []
 EAs = []
 
-for e in [6, 10, 14, 18]: 
+for e in [6, 12, 18, 24]: 
     
     popSize = e  # e 
     it =10 # iterations
@@ -102,7 +102,7 @@ for e in [6, 10, 14, 18]:
 #plot_swarm(population)
 #plt.show()
     
-plot_objectives(Populations)
+plot_objectives_2(Populations)
 plt.show()
     
 plot_IterationSGD(Populations)

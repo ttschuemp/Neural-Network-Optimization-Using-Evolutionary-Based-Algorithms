@@ -14,7 +14,7 @@ mseDerivative, relu, reluDerivative, softmax, softmaxDerivative, crossEntropy, c
 from support.Bootstrap import bootstrap, standardize, transformY
 from EvolutionaryAlgorithm import EvolutionaryAlgorithm
 from NSGAII import NSGAII
-from support.Plotting_helper import plot_objectives, plot_IterationSGD, plot_testAcc, plot_exploration
+from support.Plotting_helper import plot_objectives_2, plot_IterationSGD, plot_testAcc, plot_exploration
 
 
 # Data 
@@ -30,7 +30,7 @@ X = standardize(data.iloc[:,1:])
 data_standardized = pd.concat([data.iloc[:,0], X], axis=1)
 
 # bootstrap in train, vali and test
-data_train, data_vali, data_test = bootstrap(data_standardized,train = 0.6, validation = 0.2, test = 0.2,
+data_train, data_vali, data_test = bootstrap(data_standardized,train = 0.5, validation = 0.25, test = 0.25,
                                              replacement = False) # default is 60/20/20
                                                                                      # must be False otherwise test data not unseen data
 # transform y and X in np.array | y: 2=1, 1=0
@@ -52,11 +52,11 @@ X_test = np.asanyarray(data_test.iloc[:,1:])
 Populations = []
 EAs = []
 
-for e in [6, 10, 14, 18]: 
+for e in [6,12,18,24]: 
     
     popSize = e
     it = 10 # iterations
-    minAcc = 0.8 # makes algorithm much faster!! and more fair comparison! Better convergence
+    minAcc = 0.9 # makes algorithm much faster!! and more fair comparison! Better convergence
     
     EA = EvolutionaryAlgorithm(xTrain = X_train, yTrain = y_train, 
                            popSize = popSize)
@@ -69,12 +69,12 @@ for e in [6, 10, 14, 18]:
     for t in range(it):
         print('** GENERATION',t+1,'**')
         # reproduction and mutation
-        offSpring = EA.makeOffspring(population, t)
+        offSpring = EA.makeOffspring(population, t-2)
         
         # train with Adam
-        EA.trainPop(population, epochs = 40, minAcc = minAcc) # 40
-        EA.trainPop(offSpring, epochs = 40, minAcc = minAcc) # 40
-        minAcc += 0.04 
+        EA.trainPop(population, epochs = 20, minAcc = minAcc) # 40
+        EA.trainPop(offSpring, epochs = 20, minAcc = minAcc) # 40
+        minAcc += 0.02 #0.04
         
         # evaluate on validation dataset 
         EA.predPop(offSpring, X = X_vali, Y = y_vali)
@@ -94,7 +94,7 @@ for e in [6, 10, 14, 18]:
 #plot_swarm(population)
 #plt.show()
     
-plot_objectives(Populations)
+plot_objectives_2(Populations)
 plt.show()
     
 plot_IterationSGD(Populations)
@@ -102,6 +102,7 @@ plt.show()
     
 plot_testAcc(Populations)
 plt.show()
+
         
 plot_exploration(EAs, it)
 plt.show()
