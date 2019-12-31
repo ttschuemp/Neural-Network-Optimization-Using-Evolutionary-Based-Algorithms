@@ -13,6 +13,6 @@ class ActivationLayer(Layers):
         self.output = self.activation(self.input)
         return self.output
 
-    def backwardPropagation(self, outputError): # learning Rate is not used!
+    def backwardPropagation(self, outputError):
 
-        return self.activationDerivative(self.input) * outputError # here element multiplication
+        return self.activationDerivative(self.input) * outputError # here element-wise multiplication

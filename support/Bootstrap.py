@@ -8,7 +8,7 @@ def bootstrap(data, train = 0.6, validation = 0.2, test = 0.2, replacement = Tru
     return data_train, data_validation, data_test
 
 
-def standardize(data):
+def standardize(data): 
     _,c = data.shape
     data_standardized = data.copy(deep=True)
     for j in range(c):
@@ -20,7 +20,7 @@ def standardize(data):
                 
     return data_standardized
         
-def standardize_image(data):
+def standardize_image(data): # image data
     r,_ = data.shape
     data_standardized = data.copy(deep=True)
     for j in range(r):
@@ -38,26 +38,26 @@ def transformY(data, output):
     for i in range(n):
         j = data.iloc[i,0] 
         if j == 2:
-             y[i,1] = 0.99
+             y[i,1] = 0.99 #target
         if j == 1: 
-            y[i,0] = 0.99
+            y[i,0] = 0.99 #target
     return y
 
-def transformY_ad(data, output):
+def transformY_ad(data, output): # for syntetic dataset
     n,_ = data.shape
     y = np.zeros((n,output))+0.01
     for i in range(n):
         j = data[i] 
         if j == 1:
-             y[i,1] = 0.99
+             y[i,1] = 0.99 #target
         if j == 0: 
-            y[i,0] = 0.99
+            y[i,0] = 0.99 #target
     return y
 
-def transformY_mnist(data, output):
+def transformY_mnist(data, output): # for MNIST
     n,_ = data.shape
     y = np.zeros((n,output))+0.01
     for i in range(n):
         j = int(data.iloc[i,0])
-        y[i,j] = 0.99
+        y[i,j] = 0.99 #target
     return y

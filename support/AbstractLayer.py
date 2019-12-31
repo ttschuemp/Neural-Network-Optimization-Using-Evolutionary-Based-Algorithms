@@ -14,14 +14,14 @@ class Layers(ABC):
 
     @abstractmethod # abstract method must now be implemented in subclass
     def forwardPropagation(self, inputData):
-        #
+        
         # computes the output of a layer for a given input
-        #
+        
         pass
 
     @abstractmethod
     def backwardPropagation(self, outputError):
-        #
+        
         # computes the derivative of the error with respect to
         # its input (dE/dX) given derivative of the error with
         # respect to its output (dE/dY)

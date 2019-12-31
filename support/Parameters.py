@@ -9,9 +9,7 @@ mseDerivative, relu, reluDerivative, softmax, softmaxDerivative, crossEntropy, c
 from support.ActivationLayer import ActivationLayer
 from NeuralNetwork_Batch import NeuralNetwork
 
-
-
-def randomActivationLayer(): # gives random a ActivationLayer with sigmoid or tanh
+def randomActivationLayer(): # gives random a ActivationLayer with sigmoid or tanh or relu
     b = np.random.randint(3) # 3
     if b == 0:
         activationLayer = ActivationLayer(sigmoid, sigmoidDerivative)
@@ -21,8 +19,6 @@ def randomActivationLayer(): # gives random a ActivationLayer with sigmoid or ta
         activationLayer = ActivationLayer(relu, reluDerivative)
     
     return activationLayer
-
-
 
 
 def initializeParameters(): # gives architecture of a NN
