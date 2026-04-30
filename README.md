@@ -1,4 +1,4 @@
-# Neural Network Optimization Using Evolutionary-Based Algorithms
+# Neural Network Optimization Using Evolutionary Algorithms
 
 This repository contains a from-scratch Python implementation of feed-forward neural networks whose architectures and weights are optimized with evolutionary algorithms. The project explores how evolutionary operators and NSGA-II selection can search for neural networks that balance predictive performance with model complexity.
 
@@ -70,7 +70,7 @@ pip install numpy pandas scipy matplotlib seaborn
 
 Recommended environment:
 
-- Python 3.x
+- Python 3.8 or newer
 - A virtual environment such as `venv` or `conda`
 
 Example setup:
