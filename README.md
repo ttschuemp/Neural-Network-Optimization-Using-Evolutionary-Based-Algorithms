@@ -1,6 +1,8 @@
 # Neural Network Optimization Using Evolutionary Algorithms
 
-This repository contains a from-scratch Python implementation of feed-forward neural networks whose architectures and weights are optimized with evolutionary algorithms. The project explores how evolutionary operators and NSGA-II selection can search for neural networks that balance predictive performance with model complexity.
+This repository contains the code for a Master’s thesis conducted at the University of Basel, which received the **Best Master’s Thesis Award** for the academic year.
+
+The project presents a from-scratch Python implementation of feed-forward neural networks whose architectures and weights are optimized with evolutionary algorithms. It explores how evolutionary operators and NSGA-II selection can be used to identify models that effectively balance predictive performance and model complexity.
 
 The implementation does **not** use TensorFlow, PyTorch, Keras, or other neural-network frameworks. Core neural-network layers, activation functions, training, mutation, population management, and selection logic are implemented directly with NumPy.
 
