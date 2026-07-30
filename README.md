@@ -4,6 +4,11 @@ This repository contains the code for a Master’s thesis conducted at the Unive
 
 The project presents a from-scratch Python implementation of feed-forward neural networks whose architectures and weights are optimized with evolutionary algorithms. It explores how evolutionary operators and NSGA-II selection can be used to identify models that effectively balance predictive performance and model complexity.
 
+<img width="378" height="286" alt="Screenshot 2026-07-30 at 10 59 03" src="https://github.com/user-attachments/assets/669dd2d1-a29e-4f24-9721-96ec7c6c8c00" />
+
+Overview of the evolutionary approach. The main loop minimises the number of neurons and maximises the validation accuracy. The training loop minimises the training
+loss with Adam. 
+
 The implementation does **not** use TensorFlow, PyTorch, Keras, or other neural-network frameworks. Core neural-network layers, activation functions, training, mutation, population management, and selection logic are implemented directly with NumPy.
 
 ## Project goals
